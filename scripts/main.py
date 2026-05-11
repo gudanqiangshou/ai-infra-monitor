@@ -26,6 +26,7 @@ from db import init_db, get_conn
 import fetch_news
 import render_html
 import feishu_notifier
+import classify_with_claude
 
 LOG_DIR = Path(__file__).parent.parent / "logs"
 LOG_DIR.mkdir(exist_ok=True)
@@ -144,6 +145,14 @@ def main():
             logging.error(f"news fetch failed: {e}")
     else:
         logging.info("⏭ skipping news fetch")
+
+    # 2.5 用Claude翻译+分类新事件（如配置了API）
+    if new_events > 0 and os.environ.get("ANTHROPIC_API_KEY"):
+        logging.info(f"🤖 Step 1.5: classifying {new_events} new events with Claude...")
+        try:
+            classify_with_claude.main(batch_size=12, max_batches=10)
+        except Exception as e:
+            logging.error(f"classify failed: {e}")
 
     # 3. 更新资产价格
     logging.info("💹 Step 2: updating asset prices...")

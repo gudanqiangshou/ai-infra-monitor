@@ -95,13 +95,16 @@ def init_db():
         category TEXT NOT NULL,  -- capex | token | model_release | datacenter | investment
         subcategory TEXT,
         title TEXT NOT NULL,
+        translated_title TEXT,   -- Claude-API 翻译后的中文标题
         summary TEXT,
         url TEXT,
         source_name TEXT,
         published_at TEXT,
         discovered_at TEXT NOT NULL,
         severity INTEGER DEFAULT 3,
-        entities TEXT,  -- JSON: ["AMZN", "NVDA", ...]
+        entities TEXT,           -- JSON: ["AMZN", "NVDA", ...]
+        impact TEXT,             -- positive / negative / neutral
+        thesis TEXT,             -- 投资视角解读 1-2句
         pushed BOOLEAN DEFAULT 0,
         pushed_at TEXT
     );

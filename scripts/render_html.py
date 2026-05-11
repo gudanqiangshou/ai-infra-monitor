@@ -143,8 +143,8 @@ def query_recent_events(limit=50, min_severity=3):
     conn = get_conn()
     cur = conn.cursor()
     cur.execute("""
-        SELECT category, title, summary, url, source_name,
-               published_at, discovered_at, severity, entities
+        SELECT category, title, translated_title, summary, url, source_name,
+               published_at, discovered_at, severity, entities, impact, thesis
         FROM news_events
         WHERE severity >= ?
         ORDER BY discovered_at DESC
@@ -311,6 +311,10 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC"
 .event-title a:hover { color: #667eea; }
 .event-meta { font-size: 12px; color: #64748b; }
 .severity-stars { color: #f59e0b; font-size: 11px; margin-left: 4px; }
+.impact-pos { color: #059669; font-size: 11px; margin-left: 6px; font-weight: 600; }
+.impact-neg { color: #dc2626; font-size: 11px; margin-left: 6px; font-weight: 600; }
+.event-thesis { font-size: 12px; color: #475569; margin-top: 6px; padding: 6px 10px;
+                background: #f8fafc; border-left: 3px solid #94a3b8; border-radius: 3px; line-height: 1.5; }
 .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 20px; }
 .stat-card { background: white; padding: 16px; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
 .stat-value { font-size: 22px; font-weight: 700; color: #1e293b; }
@@ -906,7 +910,15 @@ def render_event_html(events):
         }.get(cat, "badge-capex")
         cat_label = {"capex": "Capex", "token": "Token", "investment": "投资"}.get(cat, cat)
         stars = "⭐" * (ev.get("severity") or 3)
-        title_safe = (ev["title"] or "").replace("<", "&lt;").replace(">", "&gt;")
+
+        # 优先用中文翻译，没有则用原标题
+        display_title = ev.get("translated_title") or ev.get("title") or ""
+        title_safe = display_title.replace("<", "&lt;").replace(">", "&gt;")
+
+        # 原标题作为悬浮提示（如果有翻译）
+        original_title = ev.get("title", "") if ev.get("translated_title") else ""
+        title_attr = f' title="{original_title.replace(chr(34), chr(39))}"' if original_title else ""
+
         url = ev.get("url", "")
         source = ev.get("source_name", "")
         pub = (ev.get("published_at") or "")[:10]
@@ -917,15 +929,29 @@ def render_event_html(events):
                 ents = " · " + ", ".join(ent_list[:4])
         except Exception:
             pass
+
+        # impact 颜色
+        impact = ev.get("impact", "")
+        impact_label = ""
+        if impact == "positive":
+            impact_label = '<span class="impact-pos">📈 利好</span>'
+        elif impact == "negative":
+            impact_label = '<span class="impact-neg">📉 利空</span>'
+
+        thesis = ev.get("thesis", "")
+        thesis_html = f'<div class="event-thesis">💡 {thesis}</div>' if thesis else ""
+
         html_parts.append(f"""
           <li class="event-item">
             <span class="event-badge {badge_cls}">{cat_label}</span>
             <div class="event-content">
               <div class="event-title">
-                <a href="{url}" target="_blank">{title_safe}</a>
+                <a href="{url}" target="_blank"{title_attr}>{title_safe}</a>
                 <span class="severity-stars">{stars}</span>
+                {impact_label}
               </div>
               <div class="event-meta">{source} · {pub}{ents}</div>
+              {thesis_html}
             </div>
           </li>""")
     if not html_parts:
