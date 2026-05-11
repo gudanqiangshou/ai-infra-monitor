@@ -569,11 +569,11 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC"
   </div>
 </div>
 
-<!-- ==================== Tab 6: 今日要闻 ==================== -->
+<!-- ==================== Tab 6: 今日精选 ==================== -->
 <div id="tab-events" class="tab-pane">
   <div class="card">
-    <h3>近期事件 (重要性 ≥ ⭐⭐⭐)</h3>
-    <div class="subtitle">按发现时间倒序 · 限50条</div>
+    <h3>🎯 今日精选 Top 10</h3>
+    <div class="subtitle">综合评分（重要性 + 利好/利空 + 新鲜度 + 来源权威）· 类别均衡 4/3/3 · 7天窗口</div>
     <ul class="event-list" id="event-list">
       __EVENT_LIST_HTML__
     </ul>
@@ -965,7 +965,9 @@ def main():
     token_m = query_token_monthly()
     models = query_model_weekly()
     assets = query_assets()
-    events = query_recent_events(limit=50, min_severity=3)
+    # 精选 Top 10 (代替 limit=50)
+    from curate import get_top_curated
+    events = get_top_curated(window_days=7, n=10)
     china_capex = query_china_capex()
     tsmc = query_tsmc()
     korea = query_korea()

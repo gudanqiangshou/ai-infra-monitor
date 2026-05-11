@@ -56,20 +56,10 @@ def domain_label(url: str) -> str:
 
 
 def get_unpushed_events(min_severity: int = 3):
-    """获取未推送的高重要性事件"""
-    conn = get_conn()
-    cur = conn.cursor()
-    cur.execute("""
-        SELECT id, category, title, summary, url, source_name,
-               published_at, severity, entities
-        FROM news_events
-        WHERE severity >= ? AND pushed = 0
-        ORDER BY severity DESC, discovered_at DESC
-        LIMIT 15
-    """, (min_severity,))
-    rows = [dict(r) for r in cur.fetchall()]
-    conn.close()
-    return rows
+    """获取未推送的高重要性事件 — 用精选 Top 10"""
+    from curate import get_top_curated
+    # 只取未推送的精选
+    return get_top_curated(window_days=7, n=10, only_unpushed=True)
 
 
 def mark_events_pushed(event_ids):
@@ -202,18 +192,28 @@ def build_event_message(events: list, metrics: dict) -> dict:
         if not cat_events:
             continue
         content.append([_txt(cat_labels[cat], color="orange")])
-        for ev in cat_events[:5]:  # 每类最多5条
+        for ev in cat_events:
             stars = "⭐" * (ev.get("severity") or 3)
-            title = ev.get("title", "")[:80]
+            impact = ev.get("impact", "")
+            impact_emoji = {"positive": "📈", "negative": "📉"}.get(impact, "")
+            # 优先用翻译后中文标题
+            title = (ev.get("translated_title") or ev.get("title") or "")[:80]
             url = ev.get("url", "")
             src = ev.get("source_name") or domain_label(url)
-            line = [_txt(f"{stars} ")]
+
+            # 标题行
+            line = [_txt(f"{stars}{impact_emoji} ")]
             if url:
                 line.append(_link(title, url))
             else:
                 line.append(_txt(title))
             line.append(_txt(f" — {src}", color="grey"))
             content.append(line)
+
+            # 投资解读（如有）
+            thesis = ev.get("thesis", "")
+            if thesis:
+                content.append([_txt(f"   💡 {thesis}", color="grey")])
         content.append(_empty_line())
 
     # 完整Dashboard链接

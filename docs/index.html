@@ -64,7 +64,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC"
 
 <div class="header">
   <h1>📊 AI基建投资监控 Dashboard</h1>
-  <div class="meta">数据更新：2026-05-11 18:27 · 数据点：68条Capex · 51条Token · 30条模型 · 310条价格 · 50条事件</div>
+  <div class="meta">数据更新：2026-05-11 18:37 · 数据点：68条Capex · 51条Token · 30条模型 · 310条价格 · 10条事件</div>
 </div>
 
 <div class="tabs">
@@ -302,47 +302,83 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC"
   </div>
 </div>
 
-<!-- ==================== Tab 6: 今日要闻 ==================== -->
+<!-- ==================== Tab 6: 今日精选 ==================== -->
 <div id="tab-events" class="tab-pane">
   <div class="card">
-    <h3>近期事件 (重要性 ≥ ⭐⭐⭐)</h3>
-    <div class="subtitle">按发现时间倒序 · 限50条</div>
+    <h3>🎯 今日精选 Top 10</h3>
+    <div class="subtitle">综合评分（重要性 + 利好/利空 + 新鲜度 + 来源权威）· 类别均衡 4/3/3 · 7天窗口</div>
     <ul class="event-list" id="event-list">
       
           <li class="event-item">
-            <span class="event-badge badge-investment">投资</span>
+            <span class="event-badge badge-capex">Capex</span>
             <div class="event-content">
               <div class="event-title">
-                <a href="https://finance.sina.com.cn/wm/2026-05-06/doc-inhwycsf3393779.shtml" target="_blank" title="首度实现全年盈利！寒武纪高光时刻背后：国产AI芯片业绩拐点逐渐明晰_新浪财经_新浪网">寒武纪首度全年盈利，国产AI芯片业绩拐点明晰</a>
+                <a href="https://www.reuters.com/business/google-parent-alphabet-forecasts-sharp-surge-2026-capital-spending-2026-02-04/" target="_blank" title="Alphabet says capital spending in 2026 could double, cloud ...">Alphabet称2026年资本支出或翻倍，Cloud收入超越微软</a>
                 <span class="severity-stars">⭐⭐⭐⭐⭐</span>
                 <span class="impact-pos">📈 利好</span>
               </div>
-              <div class="event-meta">finance.sina.com.cn · 2026-05-06</div>
-              <div class="event-thesis">💡 寒武纪2025年扭亏为盈标志国产AI芯片商业化拐点，强化中国AI芯片替代逻辑，关注A股半导体板块。</div>
+              <div class="event-meta">reuters.com · 2026-05-11 · MSFT, GOOGL</div>
+              <div class="event-thesis">💡 Capex翻倍信号强烈，Google Cloud份额提升，关注AI基建供应链及GOOGL自身估值重估。</div>
+            </div>
+          </li>
+          <li class="event-item">
+            <span class="event-badge badge-capex">Capex</span>
+            <div class="event-content">
+              <div class="event-title">
+                <a href="https://asia.nikkei.com/business/technology/artificial-intelligence/meta-raises-2026-capex-to-145-billion-amid-ai-spending-boost" target="_blank" title="Meta raises 2026 capex to $145 billion amid AI spending boost - Nikkei Asia">Meta上调2026年Capex至$1450亿</a>
+                <span class="severity-stars">⭐⭐⭐⭐⭐</span>
+                <span class="impact-pos">📈 利好</span>
+              </div>
+              <div class="event-meta">asia.nikkei.com · 2026-05-11 · META</div>
+              <div class="event-thesis">💡 Meta Capex指引上调$100亿至$1450亿，直接利好NVDA GPU需求及数据中心供应链。</div>
+            </div>
+          </li>
+          <li class="event-item">
+            <span class="event-badge badge-capex">Capex</span>
+            <div class="event-content">
+              <div class="event-title">
+                <a href="https://www.datacenterdynamics.com/en/news/google-secures-nearly-32bn-in-debt-following-major-data-center-capex-commitment/" target="_blank" title="Google secures nearly $32bn in debt following major data center ...">Google发行320亿美元债券为2026年1850亿Capex融资</a>
+                <span class="severity-stars">⭐⭐⭐⭐⭐</span>
+                <span class="impact-pos">📈 利好</span>
+              </div>
+              <div class="event-meta">datacenterdynamics.com · 2026-05-11 · GOOGL</div>
+              <div class="event-thesis">💡 Alphabet大规模债券融资锁定AI基建投入，GOOGL Capex执行确定性提升。</div>
             </div>
           </li>
           <li class="event-item">
             <span class="event-badge badge-investment">投资</span>
             <div class="event-content">
               <div class="event-title">
-                <a href="https://cj.sina.cn/articles/view/5953740931/162dee083067035epe" target="_blank" title="国产AI芯片龙头，业绩开挂！寒武纪28亿、海光信息40亿、摩尔线程赚钱了！__财经头条__新浪财经">国产AI芯片龙头业绩开挂：寒武纪28亿、海光40亿、摩尔线程盈利</a>
-                <span class="severity-stars">⭐⭐⭐⭐</span>
+                <a href="https://www.bloomberg.com/news/articles/2026-05-08/tsmc-sales-grow-17-5-on-extended-ai-buildout-boom" target="_blank" title="TSMC Sales Grow 17.5% on Extended AI Buildout Boom - Bloomberg">台积电销售额增长17.5%，AI建设潮持续</a>
+                <span class="severity-stars">⭐⭐⭐⭐⭐</span>
                 <span class="impact-pos">📈 利好</span>
               </div>
-              <div class="event-meta">cj.sina.cn · 2026-05-11</div>
-              <div class="event-thesis">💡 中国AI芯片国产替代加速，海光/寒武纪营收高增，利好中国AI算力产业链投资逻辑。</div>
+              <div class="event-meta">bloomberg.com · 2026-05-08 · TSM</div>
+              <div class="event-thesis">💡 TSM月度营收数据验证AI芯片需求未见顶，先进制程产能利用率维持高位。</div>
             </div>
           </li>
           <li class="event-item">
-            <span class="event-badge badge-investment">投资</span>
+            <span class="event-badge badge-capex">Capex</span>
             <div class="event-content">
               <div class="event-title">
-                <a href="https://h5.ifeng.com/c/vivoArticle/v002FaBgjDhDLwehN1lFQTLp3Pdg4GWsyAwgPNCB3kefj1o__" target="_blank" title="寒武纪股价再成A股最贵，半导体为何集体上涨？">寒武纪股价成A股最贵，半导体集体上涨</a>
-                <span class="severity-stars">⭐⭐⭐⭐</span>
+                <a href="https://www.toutiao.com/w/1856654364297545/" target="_blank" title="2026年开年，微软和Meta最新财报直接点燃AI算力战场：两家巨头四">微软单季Capex 375亿、Meta 221亿，四巨头全年支出剑指千亿</a>
+                <span class="severity-stars">⭐⭐⭐⭐⭐</span>
                 <span class="impact-pos">📈 利好</span>
               </div>
-              <div class="event-meta">h5.ifeng.com · 2026-05-11</div>
-              <div class="event-thesis">💡 国产AI芯片估值重估加速，受美股半导体联动及国内AI需求双驱动，关注寒武纪/海光等标的溢价风险。</div>
+              <div class="event-meta">toutiao.com · 2026-05-11 · MSFT, META</div>
+              <div class="event-thesis">💡 四大美国云Capex超预期，直接利好NVDA/TSM/AVGO/MU及电力网络等AI基础设施全产业链。</div>
+            </div>
+          </li>
+          <li class="event-item">
+            <span class="event-badge badge-token">Token</span>
+            <div class="event-content">
+              <div class="event-title">
+                <a href="https://post.smzdm.com/p/a4qe44nx" target="_blank" title="豆包大模型日均Token使用量突破120万亿，稳居中国第一、全球前三">豆包日均Token使用量破120万亿，三个月翻倍居中国第一</a>
+                <span class="severity-stars">⭐⭐⭐⭐⭐</span>
+                <span class="impact-pos">📈 利好</span>
+              </div>
+              <div class="event-meta">post.smzdm.com · 2026-05-11 · BYTEDANCE</div>
+              <div class="event-thesis">💡 字节豆包Token消耗量级验证中国AI推理需求爆发，直接利好火山引擎算力采购及NVDA/HBM需求。</div>
             </div>
           </li>
           <li class="event-item">
@@ -361,396 +397,12 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC"
             <span class="event-badge badge-investment">投资</span>
             <div class="event-content">
               <div class="event-title">
-                <a href="https://zhuanlan.zhihu.com/p/2035104155287675952" target="_blank" title="上调寒武纪、下调浪潮信息！高盛预言了“国产AI芯片的崛起”场景- 知乎">高盛上调寒武纪目标价至2406元，预言国产AI芯片崛起</a>
-                <span class="severity-stars">⭐⭐⭐⭐</span>
-                <span class="impact-pos">📈 利好</span>
-              </div>
-              <div class="event-meta">zhuanlan.zhihu.com · 2026-05-11</div>
-              <div class="event-thesis">💡 高盛大幅上调寒武纪2026-2030年盈利预测，外资背书强化国产AI芯片长期投资逻辑。</div>
-            </div>
-          </li>
-          <li class="event-item">
-            <span class="event-badge badge-investment">投资</span>
-            <div class="event-content">
-              <div class="event-title">
-                <a href="http://www.news.cn/info/20260305/705f21b3e0514b929708e498edc58d33/c.html" target="_blank" title="新动能 新开局｜全国人大代表杨剑宇：加快推动算力电力协同发展 夯实AI时代能源底座">人大代表呼吁加快算力电力协同发展，夯实AI能源底座</a>
-                <span class="severity-stars">⭐⭐⭐</span>
-                <span class="impact-pos">📈 利好</span>
-              </div>
-              <div class="event-meta">news.cn · 2026-05-11</div>
-              <div class="event-thesis">💡 中国政策层推动算力与电力协同，利好国内AI电力基建及中国云厂商数据中心扩张。</div>
-            </div>
-          </li>
-          <li class="event-item">
-            <span class="event-badge badge-investment">投资</span>
-            <div class="event-content">
-              <div class="event-title">
-                <a href="https://www.mofcom.gov.cn/zwjg/jmxw/xyfz/art/2026/art_c98a57fa546d46d794be760f485e4dde.html" target="_blank" title="AI算力需求激增，美科技巨头联手布局小型模块化核电">AI算力需求激增，美科技巨头布局小型模块化核电</a>
-                <span class="severity-stars">⭐⭐⭐⭐</span>
-                <span class="impact-pos">📈 利好</span>
-              </div>
-              <div class="event-meta">mofcom.gov.cn · 2026-05-11 · AMZN, GOOGL, META</div>
-              <div class="event-thesis">💡 Meta/AMZN/GOOGL联手押注SMR核电，电力基础设施成AI Capex新主线，关注相关能源供应商。</div>
-            </div>
-          </li>
-          <li class="event-item">
-            <span class="event-badge badge-investment">投资</span>
-            <div class="event-content">
-              <div class="event-title">
-                <a href="https://www.youtube.com/watch" target="_blank" title="4億美元AI數據中心大單！POWL Powell 從石油老將變身算力電力王者">Powell Industries获4亿美元AI数据中心电力大单</a>
-                <span class="severity-stars">⭐⭐⭐⭐</span>
-                <span class="impact-pos">📈 利好</span>
-              </div>
-              <div class="event-meta">youtube.com · 2026-05-11</div>
-              <div class="event-thesis">💡 AI算力瓶颈从GPU转向电力基建，POWL等工业电力企业受益，关注数据中心电力供应链投资机会。</div>
-            </div>
-          </li>
-          <li class="event-item">
-            <span class="event-badge badge-investment">投资</span>
-            <div class="event-content">
-              <div class="event-title">
-                <a href="https://news.hubeidaily.net/pc/c_5241199.html" target="_blank" title="轶清二楚｜AI的尽头是算力 算力的尽头是中国电力 - 湖北日报新闻客户端">AI算力尽头是中国电力，2025年用电量破10万亿度</a>
-                <span class="severity-stars">⭐⭐⭐</span>
-                <span class="impact-pos">📈 利好</span>
-              </div>
-              <div class="event-meta">news.hubeidaily.net · 2026-05-11</div>
-              <div class="event-thesis">💡 中国电力需求激增印证AI基建扩张，利好电力及相关基础设施投资标的。</div>
-            </div>
-          </li>
-          <li class="event-item">
-            <span class="event-badge badge-investment">投资</span>
-            <div class="event-content">
-              <div class="event-title">
-                <a href="https://x.com/TheValueist/status/2052534770987389269" target="_blank" title="$CRWV KEY READ-THROUGHS FROM COREWEAVE Q1 2026 ...">CoreWeave Q1 2026关键解读：GPU基本售罄、定价上涨</a>
-                <span class="severity-stars">⭐⭐⭐⭐</span>
-                <span class="impact-pos">📈 利好</span>
-              </div>
-              <div class="event-meta">x.com · 2026-05-11 · NVDA</div>
-              <div class="event-thesis">💡 GPU供需持续紧张、定价提升，利好NVDA及AI云基础设施供应链，CoreWeave需求可见度强。</div>
-            </div>
-          </li>
-          <li class="event-item">
-            <span class="event-badge badge-investment">投资</span>
-            <div class="event-content">
-              <div class="event-title">
-                <a href="https://investors.coreweave.com/news/news-details/2026/CoreWeave-Reports-Strong-First-Quarter-2026-Results/" target="_blank" title="CoreWeave Reports Strong First Quarter 2026 Results">CoreWeave 2026年Q1业绩强劲</a>
-                <span class="severity-stars">⭐⭐⭐⭐</span>
-                <span class="impact-pos">📈 利好</span>
-              </div>
-              <div class="event-meta">investors.coreweave.com · 2026-05-11</div>
-              <div class="event-thesis">💡 GPU云租赁需求旺盛，CoreWeave业绩印证AI算力租用市场持续扩张。</div>
-            </div>
-          </li>
-          <li class="event-item">
-            <span class="event-badge badge-investment">投资</span>
-            <div class="event-content">
-              <div class="event-title">
                 <a href="https://sherwood.news/markets/coreweave-q1-earnings-2026-ai-boom-neocloud/" target="_blank" title="CoreWeave sinks after offering weak Q2 sales guidance">CoreWeave Q2指引疲软，盘后股价大跌</a>
                 <span class="severity-stars">⭐⭐⭐⭐⭐</span>
                 <span class="impact-neg">📉 利空</span>
               </div>
               <div class="event-meta">sherwood.news · 2026-05-11</div>
               <div class="event-thesis">💡 CRWV Q2指引低于预期，短期情绪压制AI云估值，需关注是否传导至NVDA订单预期。</div>
-            </div>
-          </li>
-          <li class="event-item">
-            <span class="event-badge badge-investment">投资</span>
-            <div class="event-content">
-              <div class="event-title">
-                <a href="https://www.youtube.com/watch" target="_blank" title="CoreWeave Q1 2026 Earnings: $2.1B Revenue & AI Cloud Growth ...">CoreWeave Q1营收21亿美元，签约电力超3.5GW</a>
-                <span class="severity-stars">⭐⭐⭐⭐⭐</span>
-                <span class="impact-pos">📈 利好</span>
-              </div>
-              <div class="event-meta">youtube.com · 2026-05-11</div>
-              <div class="event-thesis">💡 3.5GW签约电力彰显AI数据中心扩张规模，利好电力基础设施及NVDA长期GPU需求。</div>
-            </div>
-          </li>
-          <li class="event-item">
-            <span class="event-badge badge-investment">投资</span>
-            <div class="event-content">
-              <div class="event-title">
-                <a href="https://www.cnbc.com/2026/05/07/coreweave-crwv-q1-earnings-report-2026.html" target="_blank" title="CoreWeave (CRWV) Q1 earnings report 2026 - CNBC">CoreWeave Q1营收翻倍超预期，AI云增长强劲</a>
-                <span class="severity-stars">⭐⭐⭐⭐⭐</span>
-                <span class="impact-pos">📈 利好</span>
-              </div>
-              <div class="event-meta">cnbc.com · 2026-05-07</div>
-              <div class="event-thesis">💡 营收同比翻倍验证AI算力租赁需求爆发，支撑NVDA/AI基础设施产业链正面预期。</div>
-            </div>
-          </li>
-          <li class="event-item">
-            <span class="event-badge badge-investment">投资</span>
-            <div class="event-content">
-              <div class="event-title">
-                <a href="https://www.digitimes.com/news/a20260501VL208.html" target="_blank" title="AI chip boom sends Korea exports to record highs, supply crunch ...">AI芯片热潮推动韩国出口创历史新高，供应趋紧</a>
-                <span class="severity-stars">⭐⭐⭐⭐</span>
-                <span class="impact-pos">📈 利好</span>
-              </div>
-              <div class="event-meta">digitimes.com · 2026-05-11</div>
-              <div class="event-thesis">💡 韩国芯片出口创纪录，反映HBM/存储需求旺盛，利好MU、SK Hynix等存储产业链。</div>
-            </div>
-          </li>
-          <li class="event-item">
-            <span class="event-badge badge-investment">投资</span>
-            <div class="event-content">
-              <div class="event-title">
-                <a href="https://www.youtube.com/watch" target="_blank" title="Korea records more than US$ 85 bil. of exports in April driven by AI ...">韩国4月出口859亿美元同比增48%，半导体驱动</a>
-                <span class="severity-stars">⭐⭐⭐⭐</span>
-                <span class="impact-pos">📈 利好</span>
-              </div>
-              <div class="event-meta">youtube.com · 2026-05-11</div>
-              <div class="event-thesis">💡 半导体出口量价齐升验证AI需求持续，强化对存储及AI芯片产业链的乐观判断。</div>
-            </div>
-          </li>
-          <li class="event-item">
-            <span class="event-badge badge-investment">投资</span>
-            <div class="event-content">
-              <div class="event-title">
-                <a href="https://brief.bismarckanalysis.com/p/ai-2026-data-centers-restart-growth" target="_blank" title="AI 2026: Data Centers Restart Growth of a Stagnant U.S. Electrical Grid">AI数据中心重启美国电网增长</a>
-                <span class="severity-stars">⭐⭐⭐</span>
-                <span class="impact-pos">📈 利好</span>
-              </div>
-              <div class="event-meta">brief.bismarckanalysis.com · 2026-05-11</div>
-              <div class="event-thesis">💡 AI驱动美国电网重新扩张，电力基础设施投资主题强化，关注电网设备及公用事业板块。</div>
-            </div>
-          </li>
-          <li class="event-item">
-            <span class="event-badge badge-investment">投资</span>
-            <div class="event-content">
-              <div class="event-title">
-                <a href="https://www.softwareseni.com/why-tech-giants-are-going-nuclear-the-ai-power-crisis-driving-trillion-dollar-energy-deals/" target="_blank" title="Why Tech Giants Are Going Nuclear — The AI Power Crisis Driving Trillion-Dollar Energy Deals - SoftwareSeni">科技巨头押注核能应对AI电力危机，万亿美元能源交易涌现</a>
-                <span class="severity-stars">⭐⭐⭐⭐</span>
-                <span class="impact-pos">📈 利好</span>
-              </div>
-              <div class="event-meta">softwareseni.com · 2026-05-11 · META, NVDA, OPENAI</div>
-              <div class="event-thesis">💡 META等签署核能协议，AI电力缺口催生长期能源基建投资机会，关注电力及核能标的。</div>
-            </div>
-          </li>
-          <li class="event-item">
-            <span class="event-badge badge-investment">投资</span>
-            <div class="event-content">
-              <div class="event-title">
-                <a href="https://enkiai.com/solar/alibaba-nuclear-power-fueling-ai-data-centers-in-2026" target="_blank" title="Alibaba Nuclear Power: Fueling AI Data Centers in 2026">阿里巴巴转向核电为AI数据中心供能</a>
-                <span class="severity-stars">⭐⭐⭐⭐</span>
-                <span class="impact-pos">📈 利好</span>
-              </div>
-              <div class="event-meta">enkiai.com · 2026-05-11 · ALIBABA</div>
-              <div class="event-thesis">💡 阿里能源战略转向核电，中国云厂商AI基建电力瓶颈受关注，利好国内核电及数据中心产业链。</div>
-            </div>
-          </li>
-          <li class="event-item">
-            <span class="event-badge badge-investment">投资</span>
-            <div class="event-content">
-              <div class="event-title">
-                <a href="https://247wallst.com/investing/2026/05/04/how-ai-data-centers-are-reshaping-the-power-market-and-the-4-plays-investors-are-making/" target="_blank" title="How AI Data Centers Are Reshaping the Power Market (And the 4 Plays Investors Are Making) - 24/7 Wall St.">AI数据中心重塑电力市场：投资者的4种布局</a>
-                <span class="severity-stars">⭐⭐⭐</span>
-                <span class="impact-pos">📈 利好</span>
-              </div>
-              <div class="event-meta">247wallst.com · 2026-05-04 · GOOGL</div>
-              <div class="event-thesis">💡 AI基建扩张带动电力需求，关注电力/公用事业板块配置机会。</div>
-            </div>
-          </li>
-          <li class="event-item">
-            <span class="event-badge badge-investment">投资</span>
-            <div class="event-content">
-              <div class="event-title">
-                <a href="https://www.linkedin.com/posts/sam-nguyen-sop-a9433138_micron-hbm-ai-activity-7365880905027997697-R3sd" target="_blank" title="Micron sells out 2026 HBM supply, signaling memory's role in AI era">Micron 2026年HBM供应已售罄，存储进入AI核心地位</a>
-                <span class="severity-stars">⭐⭐⭐⭐⭐</span>
-                <span class="impact-pos">📈 利好</span>
-              </div>
-              <div class="event-meta">linkedin.com · 2026-05-11 · MU</div>
-              <div class="event-thesis">💡 MU HBM全年售罄意味着供需极度紧张，直接支撑MU估值及HBM涨价预期。</div>
-            </div>
-          </li>
-          <li class="event-item">
-            <span class="event-badge badge-investment">投资</span>
-            <div class="event-content">
-              <div class="event-title">
-                <a href="https://markets.financialcontent.com/stocks/article/finterra-2026-3-18-the-memory-supercycle-why-micron-technology-is-the-new-ai-gatekeeper" target="_blank" title="FinancialContent - The Memory Supercycle: Why Micron Technology is the New AI Gatekeeper">存储超级周期：Micron成为AI新守门人</a>
-                <span class="severity-stars">⭐⭐⭐</span>
-                <span class="impact-pos">📈 利好</span>
-              </div>
-              <div class="event-meta">markets.financialcontent.com · 2026-05-11 · MU</div>
-              <div class="event-thesis">💡 行业研报定性MU为AI存储核心卡位者，强化HBM供应链长期投资逻辑。</div>
-            </div>
-          </li>
-          <li class="event-item">
-            <span class="event-badge badge-investment">投资</span>
-            <div class="event-content">
-              <div class="event-title">
-                <a href="https://finance.yahoo.com/news/micron-technology-says-ai-memory-120916916.html" target="_blank" title="Micron Technology Says AI Memory Demand Still Outstrips Supply ...">Micron：AI内存需求持续超供至2026年，HBM4提前出货</a>
-                <span class="severity-stars">⭐⭐⭐⭐⭐</span>
-                <span class="impact-pos">📈 利好</span>
-              </div>
-              <div class="event-meta">finance.yahoo.com · 2026-05-11 · MU</div>
-              <div class="event-thesis">💡 MU官方确认HBM4提前量产且2026产能售罄，直接利好MU及HBM产业链估值。</div>
-            </div>
-          </li>
-          <li class="event-item">
-            <span class="event-badge badge-investment">投资</span>
-            <div class="event-content">
-              <div class="event-title">
-                <a href="https://tech-insider.org/micron-q2-2026-earnings-ai-memory-market/" target="_blank" title="Micron Q2 2026: Record Revenue on AI Boom [Analysis]">Micron Q2 2026：AI驱动营收创历史新高</a>
-                <span class="severity-stars">⭐⭐⭐⭐⭐</span>
-                <span class="impact-pos">📈 利好</span>
-              </div>
-              <div class="event-meta">tech-insider.org · 2026-05-11 · MU, HYNIX</div>
-              <div class="event-thesis">💡 AI需求拉动HBM/内存出货，MU业绩验证AI存储投资逻辑。</div>
-            </div>
-          </li>
-          <li class="event-item">
-            <span class="event-badge badge-investment">投资</span>
-            <div class="event-content">
-              <div class="event-title">
-                <a href="https://www.spglobal.com/market-intelligence/en/news-insights/research/2026/01/ai-memory-boom-squeezes-legacy-dram-supply-pushing-prices-higher" target="_blank" title="AI memory boom squeezes legacy DRAM supply, pushing prices ...">AI内存热潮挤压传统DRAM供应，推动价格上涨</a>
-                <span class="severity-stars">⭐⭐⭐⭐</span>
-                <span class="impact-pos">📈 利好</span>
-              </div>
-              <div class="event-meta">spglobal.com · 2026-05-11 · MU, HYNIX</div>
-              <div class="event-thesis">💡 HBM ASP上涨（Micron+22%）叠加DRAM供应收紧，存储产业链量价双升逻辑强化。</div>
-            </div>
-          </li>
-          <li class="event-item">
-            <span class="event-badge badge-investment">投资</span>
-            <div class="event-content">
-              <div class="event-title">
-                <a href="https://www.bloomberg.com/news/articles/2026-05-08/tsmc-sales-grow-17-5-on-extended-ai-buildout-boom" target="_blank" title="TSMC Sales Grow 17.5% on Extended AI Buildout Boom - Bloomberg">台积电销售额增长17.5%，AI建设潮持续</a>
-                <span class="severity-stars">⭐⭐⭐⭐⭐</span>
-                <span class="impact-pos">📈 利好</span>
-              </div>
-              <div class="event-meta">bloomberg.com · 2026-05-08 · TSM</div>
-              <div class="event-thesis">💡 TSM月度营收数据验证AI芯片需求未见顶，先进制程产能利用率维持高位。</div>
-            </div>
-          </li>
-          <li class="event-item">
-            <span class="event-badge badge-investment">投资</span>
-            <div class="event-content">
-              <div class="event-title">
-                <a href="https://investor.tsmc.com/english/monthly-revenue/2026" target="_blank" title="TSMC 2026 monthly revenue - Taiwan Semiconductor Manufacturing Company Limited">TSMC 2026年月度营收数据披露</a>
-                <span class="severity-stars">⭐⭐⭐⭐</span>
-                
-              </div>
-              <div class="event-meta">investor.tsmc.com · 2026-05-11 · TSM</div>
-              <div class="event-thesis">💡 TSMC月度营收数据为跟踪AI芯片需求景气度的核心先行指标，需持续关注。</div>
-            </div>
-          </li>
-          <li class="event-item">
-            <span class="event-badge badge-investment">投资</span>
-            <div class="event-content">
-              <div class="event-title">
-                <a href="https://www.digitimes.com/news/a20260508VL206/tsmc-revenue-2026-nyse-growth.html" target="_blank" title="TSMC's 2026 revenue surges 30% in first four months on AI boom">台积电2026年前四月营收同比增30%，AI需求强劲</a>
-                <span class="severity-stars">⭐⭐⭐⭐⭐</span>
-                <span class="impact-pos">📈 利好</span>
-              </div>
-              <div class="event-meta">digitimes.com · 2026-05-11 · TSM</div>
-              <div class="event-thesis">💡 TSM累计营收增速加速，AI芯片订单饱满，利好TSM及上游设备/材料链。</div>
-            </div>
-          </li>
-          <li class="event-item">
-            <span class="event-badge badge-investment">投资</span>
-            <div class="event-content">
-              <div class="event-title">
-                <a href="https://finance.yahoo.com/sectors/technology/articles/tsmc-posts-strong-april-revenue-100149186.html" target="_blank" title="TSMC posts strong April revenue growth driven by AI chip demand">TSMC 4月营收强劲增长，AI芯片需求驱动，前四月同比+29.9%</a>
-                <span class="severity-stars">⭐⭐⭐⭐⭐</span>
-                <span class="impact-pos">📈 利好</span>
-              </div>
-              <div class="event-meta">finance.yahoo.com · 2026-05-11 · TSM</div>
-              <div class="event-thesis">💡 TSMC前四月营收增30%，直接验证NVDA/AI芯片订单旺盛，利好TSM及整条AI算力产业链。</div>
-            </div>
-          </li>
-          <li class="event-item">
-            <span class="event-badge badge-investment">投资</span>
-            <div class="event-content">
-              <div class="event-title">
-                <a href="https://investor.nvidia.com/financial-info/financial-reports/default.aspx" target="_blank" title="Financial Reports - NVIDIA Investor Relations">NVIDIA FY2026 Q4及全年财报正式发布</a>
-                <span class="severity-stars">⭐⭐⭐⭐⭐</span>
-                <span class="impact-pos">📈 利好</span>
-              </div>
-              <div class="event-meta">investor.nvidia.com · 2026-05-11 · NVDA</div>
-              <div class="event-thesis">💡 NVDA全年财报是AI基建景气度最核心锚点，数据中心分部数据直接影响产业链估值。</div>
-            </div>
-          </li>
-          <li class="event-item">
-            <span class="event-badge badge-investment">投资</span>
-            <div class="event-content">
-              <div class="event-title">
-                <a href="https://finance.yahoo.com/news/data-center-unit-help-nvidia-130800874.html" target="_blank" title="Will Data Center Unit Help NVIDIA Reach Its $65B Q4 Revenue Goal?">NVIDIA数据中心业务能否支撑Q4 650亿美元营收目标？</a>
-                <span class="severity-stars">⭐⭐⭐⭐</span>
-                <span class="impact-pos">📈 利好</span>
-              </div>
-              <div class="event-meta">finance.yahoo.com · 2026-05-11 · NVDA</div>
-              <div class="event-thesis">💡 市场对NVDA Q4指引高度关注，数据中心收入是核心驱动变量。</div>
-            </div>
-          </li>
-          <li class="event-item">
-            <span class="event-badge badge-investment">投资</span>
-            <div class="event-content">
-              <div class="event-title">
-                <a href="https://futurumgroup.com/insights/nvidia-q3-fy-2026-record-data-center-revenue-higher-q4-guide/" target="_blank" title="NVIDIA Q3 FY 2026 Earnings: Record Data Center Revenue - Futurum">NVIDIA Q3 FY2026财报：数据中心营收创纪录</a>
-                <span class="severity-stars">⭐⭐⭐⭐⭐</span>
-                <span class="impact-pos">📈 利好</span>
-              </div>
-              <div class="event-meta">futurumgroup.com · 2026-05-11 · NVDA</div>
-              <div class="event-thesis">💡 NVDA数据中心营收再创新高，直接验证GPU算力需求持续强劲。</div>
-            </div>
-          </li>
-          <li class="event-item">
-            <span class="event-badge badge-investment">投资</span>
-            <div class="event-content">
-              <div class="event-title">
-                <a href="https://www.spglobal.com/market-intelligence/en/news-insights/research/2026/02/nvidia-earnings-preview-q4-2026" target="_blank" title="Nvidia earnings preview: Q4 2026 | S&P Global">NVIDIA Q4 2026财报前瞻：数据中心营收预期570-630亿美元</a>
-                <span class="severity-stars">⭐⭐⭐⭐</span>
-                <span class="impact-pos">📈 利好</span>
-              </div>
-              <div class="event-meta">spglobal.com · 2026-05-11 · NVDA</div>
-              <div class="event-thesis">💡 S&P共识预期区间宽泛，NVDA Q4数据中心收入兑现度是关键催化剂。</div>
-            </div>
-          </li>
-          <li class="event-item">
-            <span class="event-badge badge-token">Token</span>
-            <div class="event-content">
-              <div class="event-title">
-                <a href="https://phemex.com/news/article/global-ai-spending-projected-to-hit-25-trillion-in-2026-78281" target="_blank" title="Global AI Spending to Reach $2.5 Trillion in 2026 | Phemex News">2026年全球AI支出将达2.5万亿美元，超过过去十年总和</a>
-                <span class="severity-stars">⭐⭐⭐</span>
-                <span class="impact-pos">📈 利好</span>
-              </div>
-              <div class="event-meta">phemex.com · 2026-05-11</div>
-              <div class="event-thesis">💡 Gartner宏观预测支撑AI基建长期Capex扩张叙事，对四大云及AI产业链整体利好。</div>
-            </div>
-          </li>
-          <li class="event-item">
-            <span class="event-badge badge-token">Token</span>
-            <div class="event-content">
-              <div class="event-title">
-                <a href="https://robonomics.substack.com/p/token-tracker-and-implications" target="_blank" title="Token Tracker & Implications - by FD - Robonomics">中国或成全球最大Token消费经济体</a>
-                <span class="severity-stars">⭐⭐⭐</span>
-                <span class="impact-pos">📈 利好</span>
-              </div>
-              <div class="event-meta">robonomics.substack.com · 2026-05-11</div>
-              <div class="event-thesis">💡 中国AI Token消耗量超越美国，利好中国云厂商及国产AI芯片算力需求。</div>
-            </div>
-          </li>
-          <li class="event-item">
-            <span class="event-badge badge-token">Token</span>
-            <div class="event-content">
-              <div class="event-title">
-                <a href="https://www.itiger.com/news/1183088688" target="_blank" title="Who is Consuming the 5 Trillion Token Model Compute Power? - Tiger Brokers">谁在消耗5万亿Token算力？AI模型消费结构深度解析</a>
-                <span class="severity-stars">⭐⭐⭐</span>
-                <span class="impact-pos">📈 利好</span>
-              </div>
-              <div class="event-meta">itiger.com · 2026-05-11</div>
-              <div class="event-thesis">💡 Token消耗量持续攀升，直接拉动GPU算力需求，利好NVDA及云厂商AI推理基础设施投资。</div>
-            </div>
-          </li>
-          <li class="event-item">
-            <span class="event-badge badge-token">Token</span>
-            <div class="event-content">
-              <div class="event-title">
-                <a href="https://www.linkedin.com/posts/dianakearns_ai-activity-7445085122384564224-6h6U" target="_blank" title="AI Token Consumption Surges: Enterprises to Double Usage by 2028">AI Token消耗激增，企业用量2028年将翻倍</a>
-                <span class="severity-stars">⭐⭐⭐</span>
-                <span class="impact-pos">📈 利好</span>
-              </div>
-              <div class="event-meta">linkedin.com · 2026-05-11</div>
-              <div class="event-thesis">💡 企业Token消耗量快速攀升，直接拉动推理算力需求，利好GPU及数据中心扩张逻辑。</div>
             </div>
           </li>
           <li class="event-item">
@@ -769,144 +421,12 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC"
             <span class="event-badge badge-token">Token</span>
             <div class="event-content">
               <div class="event-title">
-                <a href="https://www.atlascloud.ai/blog/guides/kimi-k2-6-vs-glm-5-1-vs-qwen-3-6-plus-vs-minimax-m2-7-coding-2026" target="_blank" title="Kimi K2.6 vs GLM 5.1 vs Qwen 3.6 Plus vs MiniMax M2.7: Which Open Source Model Wins for Coding in 2026 - Atlas Cloud Blog">Kimi K2.6/GLM 5.1/Qwen 3.6/MiniMax M2.7编程能力对比</a>
-                <span class="severity-stars">⭐⭐⭐</span>
-                <span class="impact-pos">📈 利好</span>
-              </div>
-              <div class="event-meta">atlascloud.ai · 2026-05-11 · ALIBABA, MOONSHOT, MINIMAX, ZHIPU</div>
-              <div class="event-thesis">💡 中国开源模型编程能力快速追赶，字节/阿里/月之暗面推理算力需求上升，利好中国AI云基建。</div>
-            </div>
-          </li>
-          <li class="event-item">
-            <span class="event-badge badge-token">Token</span>
-            <div class="event-content">
-              <div class="event-title">
-                <a href="https://post.smzdm.com/p/a4qe44nx" target="_blank" title="豆包大模型日均Token使用量突破120万亿，稳居中国第一、全球前三">豆包日均Token使用量破120万亿，三个月翻倍居中国第一</a>
-                <span class="severity-stars">⭐⭐⭐⭐⭐</span>
-                <span class="impact-pos">📈 利好</span>
-              </div>
-              <div class="event-meta">post.smzdm.com · 2026-05-11 · BYTEDANCE</div>
-              <div class="event-thesis">💡 字节豆包Token消耗量级验证中国AI推理需求爆发，直接利好火山引擎算力采购及NVDA/HBM需求。</div>
-            </div>
-          </li>
-          <li class="event-item">
-            <span class="event-badge badge-token">Token</span>
-            <div class="event-content">
-              <div class="event-title">
-                <a href="https://mtz.china.com/touzi/2026/0408/226381.html" target="_blank" title="国诚投顾：Token调用量亮眼，关注新游上线进度 - 中华网">豆包大模型日均Token使用量突破120万亿，智谱全年收入增131%</a>
-                <span class="severity-stars">⭐⭐⭐⭐</span>
-                <span class="impact-pos">📈 利好</span>
-              </div>
-              <div class="event-meta">mtz.china.com · 2026-04-08 · BYTEDANCE, ZHIPU</div>
-              <div class="event-thesis">💡 字节豆包Token量级爆发，驱动中国云AI推理算力需求，利好国内AI芯片及云基础设施。</div>
-            </div>
-          </li>
-          <li class="event-item">
-            <span class="event-badge badge-token">Token</span>
-            <div class="event-content">
-              <div class="event-title">
-                <a href="https://cloud.tencent.com/developer/article/2646117" target="_blank" title="2年1000倍：一张图看懂中国AI Token消耗的疯狂曲线 - 腾讯云">2年1000倍：中国AI Token消耗曲线解析</a>
-                <span class="severity-stars">⭐⭐⭐</span>
-                <span class="impact-pos">📈 利好</span>
-              </div>
-              <div class="event-meta">cloud.tencent.com · 2026-05-11 · BYTEDANCE, DEEPSEEK</div>
-              <div class="event-thesis">💡 行业级Token增长曲线印证中国云厂商持续扩张推理算力的必要性，关注阿里/腾讯/字节Capex。</div>
-            </div>
-          </li>
-          <li class="event-item">
-            <span class="event-badge badge-token">Token</span>
-            <div class="event-content">
-              <div class="event-title">
                 <a href="https://www.yicai.com/news/103116165.html" target="_blank" title="豆包大模型日均Token使用量突破120万亿 - 第一财经">豆包日均Token突破120万亿，两年增长1000倍</a>
                 <span class="severity-stars">⭐⭐⭐⭐</span>
                 <span class="impact-pos">📈 利好</span>
               </div>
               <div class="event-meta">yicai.com · 2026-05-11 · BYTEDANCE</div>
               <div class="event-thesis">💡 第一财经权威披露字节豆包Token数据，强化中国AI推理算力需求叙事，利好国产AI芯片及云基建。</div>
-            </div>
-          </li>
-          <li class="event-item">
-            <span class="event-badge badge-token">Token</span>
-            <div class="event-content">
-              <div class="event-title">
-                <a href="https://www.zhihu.com/question/2020080431484139480" target="_blank" title="「豆包日均Token调用量破100万亿」如何看待这一数据 ... - 知乎">豆包日均Token调用量破100万亿，春节后两个月涨超60%</a>
-                <span class="severity-stars">⭐⭐⭐⭐</span>
-                <span class="impact-pos">📈 利好</span>
-              </div>
-              <div class="event-meta">zhihu.com · 2026-05-11 · BYTEDANCE</div>
-              <div class="event-thesis">💡 知乎深度讨论验证字节算力需求持续高增，火山引擎GPU采购节奏值得跟踪。</div>
-            </div>
-          </li>
-          <li class="event-item">
-            <span class="event-badge badge-token">Token</span>
-            <div class="event-content">
-              <div class="event-title">
-                <a href="https://x.com/FredaDuan/status/2027085348543586772" target="_blank" title="Does China's 2C market structurally consume more tokens? Larger ...">中国2C市场是否结构性消耗更多Token？</a>
-                <span class="severity-stars">⭐⭐⭐</span>
-                <span class="impact-pos">📈 利好</span>
-              </div>
-              <div class="event-meta">x.com · 2026-05-11</div>
-              <div class="event-thesis">💡 OpenRouter数据显示中国模型单周API Token达4.12万亿，中国推理需求结构性优势利好相关算力投资。</div>
-            </div>
-          </li>
-          <li class="event-item">
-            <span class="event-badge badge-token">Token</span>
-            <div class="event-content">
-              <div class="event-title">
-                <a href="https://investinchina.chinadaily.com.cn/s/202604/10/WS69d88f59498e36855033bd1c/chinese-ai-models-take-top-six-spots-in-global-usage-rankings-data.html" target="_blank" title="Chinese AI models take top six spots in global usage rankings: data | investinchina.chinadaily.com.cn">中国AI模型包揽全球使用量排名前六</a>
-                <span class="severity-stars">⭐⭐⭐⭐</span>
-                <span class="impact-pos">📈 利好</span>
-              </div>
-              <div class="event-meta">investinchina.chinadaily.com.cn · 2026-05-11 · ALIBABA</div>
-              <div class="event-thesis">💡 中国模型全球使用量前六强化国内算力需求，同时对NVDA出口管制背景下国产AI芯片替代形成压力测试。</div>
-            </div>
-          </li>
-          <li class="event-item">
-            <span class="event-badge badge-token">Token</span>
-            <div class="event-content">
-              <div class="event-title">
-                <a href="https://news.futunn.com/en/post/69120002/behind-the-surge-in-openrouter-token-usage-domestic-models-dominate" target="_blank" title="Behind the Surge in OpenRouter Token Usage: Domestic Models Dominate Rankings with Programming and Intelligent Agents as Key Determinants">OpenRouter Token激增背后：中国模型占据主导，编程与Agent是关键驱动</a>
-                <span class="severity-stars">⭐⭐⭐⭐</span>
-                <span class="impact-pos">📈 利好</span>
-              </div>
-              <div class="event-meta">news.futunn.com · 2026-05-11</div>
-              <div class="event-thesis">💡 中国模型在OpenRouter占60%+份额，编程/Agent场景Token密度高，利好推理算力及HBM需求持续增长。</div>
-            </div>
-          </li>
-          <li class="event-item">
-            <span class="event-badge badge-capex">Capex</span>
-            <div class="event-content">
-              <div class="event-title">
-                <a href="https://www.toutiao.com/w/1856654364297545/" target="_blank" title="2026年开年，微软和Meta最新财报直接点燃AI算力战场：两家巨头四">微软单季Capex 375亿、Meta 221亿，四巨头全年支出剑指千亿</a>
-                <span class="severity-stars">⭐⭐⭐⭐⭐</span>
-                <span class="impact-pos">📈 利好</span>
-              </div>
-              <div class="event-meta">toutiao.com · 2026-05-11 · MSFT, META</div>
-              <div class="event-thesis">💡 四大美国云Capex超预期，直接利好NVDA/TSM/AVGO/MU及电力网络等AI基础设施全产业链。</div>
-            </div>
-          </li>
-          <li class="event-item">
-            <span class="event-badge badge-capex">Capex</span>
-            <div class="event-content">
-              <div class="event-title">
-                <a href="https://tw.stock.yahoo.com/news/ai%E6%8A%95%E8%B3%87%E8%A6%8F%E6%A8%A1%E7%A9%BA%E5%89%8D-%E7%BE%8E%E5%9C%8B%E7%A7%91%E6%8A%80%E5%B7%A8%E9%A0%AD%E4%BB%8A%E5%B9%B4%E8%B3%87%E6%9C%AC%E6%94%AF%E5%87%BA%E4%B8%8A%E7%9C%8B6500%E5%84%84%E7%BE%8E%E5%85%83-072400282.html" target="_blank" title="AI投資規模空前，美國科技巨頭今年資本支出上看6500億美元">美国四大科技巨头2026年Capex上看6500亿美元</a>
-                <span class="severity-stars">⭐⭐⭐⭐⭐</span>
-                <span class="impact-pos">📈 利好</span>
-              </div>
-              <div class="event-meta">tw.stock.yahoo.com · 2026-05-11 · AMZN, MSFT, GOOGL, META</div>
-              <div class="event-thesis">💡 AMZN/MSFT/GOOGL/META合计Capex指引6500亿美元创历史新高，直接利好NVDA/TSM/AVGO/MU及电力网络基建。</div>
-            </div>
-          </li>
-          <li class="event-item">
-            <span class="event-badge badge-capex">Capex</span>
-            <div class="event-content">
-              <div class="event-title">
-                <a href="https://www.sohu.com/a/1016946936_122132398" target="_blank" title="美股讯号| 谷歌等四巨头2026年AI支出或超7000亿美元 - 搜狐">谷歌等四巨头2026年AI Capex或超7000亿美元</a>
-                <span class="severity-stars">⭐⭐⭐⭐⭐</span>
-                <span class="impact-pos">📈 利好</span>
-              </div>
-              <div class="event-meta">sohu.com · 2026-05-11 · AMZN, MSFT, GOOGL, META</div>
-              <div class="event-thesis">💡 7000亿美元Capex规模确认AI军备竞赛持续，为NVDA/HBM/电力/网络设备提供强力需求支撑。</div>
             </div>
           </li>
     </ul>
