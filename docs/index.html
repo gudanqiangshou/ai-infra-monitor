@@ -13,7 +13,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC"
           padding: 24px 32px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
 .header h1 { margin: 0 0 8px 0; font-size: 24px; font-weight: 600; }
 .header .meta { font-size: 13px; opacity: 0.9; }
-.tabs { display: flex; background: white; border-bottom: 1px solid #e5e8eb;
+.tabs { display: flex; flex-wrap: wrap; background: white; border-bottom: 1px solid #e5e8eb;
         padding: 0 32px; position: sticky; top: 0; z-index: 10; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
 .tab { padding: 16px 24px; cursor: pointer; font-size: 14px; font-weight: 500;
        color: #64748b; border-bottom: 3px solid transparent; transition: all 0.2s; }
@@ -60,13 +60,15 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC"
 
 <div class="header">
   <h1>📊 AI基建投资监控 Dashboard</h1>
-  <div class="meta">数据更新：2026-05-11 16:43 · 数据点：68条Capex · 51条Token · 30条模型 · 310条价格 · 46条事件</div>
+  <div class="meta">数据更新：2026-05-11 17:53 · 数据点：68条Capex · 51条Token · 30条模型 · 310条价格 · 41条事件</div>
 </div>
 
 <div class="tabs">
   <div class="tab active" onclick="showTab('capex')">💰 Capex Dashboard</div>
+  <div class="tab" onclick="showTab('china')">🇨🇳 中国云厂商</div>
   <div class="tab" onclick="showTab('token')">🚀 Token Dashboard</div>
   <div class="tab" onclick="showTab('invest')">📈 投资关联</div>
+  <div class="tab" onclick="showTab('macro')">🌏 宏观信号</div>
   <div class="tab" onclick="showTab('events')">📰 今日要闻</div>
 </div>
 
@@ -77,19 +79,19 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC"
 
   <div class="stat-grid">
     <div class="stat-card">
-      <div class="stat-value">$695B</div>
+      <div class="stat-value">$710.0B</div>
       <div class="stat-label">2026全年指引合计</div>
-      <div class="stat-delta">YoY +107%</div>
+      <div class="stat-delta">YoY +96.0%</div>
     </div>
     <div class="stat-card">
       <div class="stat-value">$130.5B</div>
       <div class="stat-label">2026 Q1 单季合计</div>
-      <div class="stat-delta">YoY +92%</div>
+      <div class="stat-delta">YoY +81.5%</div>
     </div>
     <div class="stat-card">
-      <div class="stat-value">$338B</div>
+      <div class="stat-value">$362.2B</div>
       <div class="stat-label">2025全年合计</div>
-      <div class="stat-delta">YoY +34%</div>
+      <div class="stat-delta">YoY +47.7%</div>
     </div>
     <div class="stat-card">
       <div class="stat-value">~75%</div>
@@ -128,29 +130,76 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC"
   </div>
 </div>
 
-<!-- ==================== Tab 2: Token ==================== -->
+<!-- ==================== Tab 2: 中国云厂商 ==================== -->
+<div id="tab-china" class="tab-pane">
+  <div class="stat-grid">
+    <div class="stat-card">
+      <div class="stat-value">¥6375.0B</div>
+      <div class="stat-label">中国四大云 2025 Capex合计</div>
+      <div class="stat-delta">折合 ~$897.9B</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">¥2550.0B</div>
+      <div class="stat-label">2026 Q1 单季</div>
+      <div class="stat-delta">YoY +124.7%</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">¥1300.0B</div>
+      <div class="stat-label">字节单家 Q1 Capex</div>
+      <div class="stat-delta">大幅领先</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">247.9%</div>
+      <div class="stat-label">中/美Capex比例</div>
+      <div class="stat-delta">基建追赶</div>
+    </div>
+  </div>
+
+  <div class="grid-1">
+    <div class="card">
+      <h3>中国四大云季度Capex趋势</h3>
+      <div class="subtitle">单位：亿人民币 | 阿里/腾讯/字节/百度</div>
+      <div id="chart-cn-quarterly" class="chart chart-tall"></div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h3>年度Capex对比 (人民币 vs 美元)</h3>
+      <div class="subtitle">中美云厂商规模差距</div>
+      <div id="chart-cn-us-compare" class="chart"></div>
+    </div>
+    <div class="card">
+      <h3>2025年中国云Capex占比</h3>
+      <div class="subtitle">阿里/腾讯/字节/百度</div>
+      <div id="chart-cn-pie" class="chart"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== Tab 3: Token ==================== -->
 <div id="tab-token" class="tab-pane">
 
   <div class="stat-grid">
     <div class="stat-card">
-      <div class="stat-value">~250T</div>
-      <div class="stat-label">全球日均Token消耗</div>
-      <div class="stat-delta">2026年3月</div>
+      <div class="stat-value">~249.0T</div>
+      <div class="stat-label">头部平台日均Token</div>
+      <div class="stat-delta">2026年4月</div>
     </div>
     <div class="stat-card">
-      <div class="stat-value">120T</div>
-      <div class="stat-label">豆包日均</div>
+      <div class="stat-value">130.0T</div>
+      <div class="stat-label">豆包日均 (2026年4月)</div>
       <div class="stat-delta">全球第3</div>
     </div>
     <div class="stat-card">
-      <div class="stat-value">51.2%</div>
-      <div class="stat-label">中国模型OpenRouter份额</div>
-      <div class="stat-delta">2024年仅1.2%</div>
+      <div class="stat-value">62.7%</div>
+      <div class="stat-label">中国模型 OpenRouter 份额</div>
+      <div class="stat-delta">2026-04-13</div>
     </div>
     <div class="stat-card">
-      <div class="stat-value">20T+</div>
-      <div class="stat-label">OpenRouter周总量</div>
-      <div class="stat-delta">YoY +1100%</div>
+      <div class="stat-value">15.4T</div>
+      <div class="stat-label">OpenRouter 周总量</div>
+      <div class="stat-delta">week of 2026-04-13</div>
     </div>
   </div>
 
@@ -201,7 +250,55 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC"
   </div>
 </div>
 
-<!-- ==================== Tab 4: 今日要闻 ==================== -->
+<!-- ==================== Tab 5: 宏观信号 ==================== -->
+<div id="tab-macro" class="tab-pane">
+
+  <div class="stat-grid">
+    <div class="stat-card">
+      <div class="stat-value">$12.14B</div>
+      <div class="stat-label">TSMC 最新月营收</div>
+      <div class="stat-delta">2026年4月</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">+11.1%</div>
+      <div class="stat-label">TSMC YoY</div>
+      <div class="stat-delta">AI芯片代工景气度</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">$18.0B</div>
+      <div class="stat-label">韩国半导体出口</div>
+      <div class="stat-delta">2026年4月</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">+56.5%</div>
+      <div class="stat-label">韩国YoY</div>
+      <div class="stat-delta">HBM/存储领先指标</div>
+    </div>
+  </div>
+
+  <div class="grid-1">
+    <div class="card">
+      <h3>TSMC月度营收 (亿美元) — AI芯片代工景气度</h3>
+      <div class="subtitle">每月10日左右公布 | 数据来源：TSMC IR</div>
+      <div id="chart-tsmc" class="chart"></div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h3>韩国半导体出口</h3>
+      <div class="subtitle">每月1日公布 | 来源：MOTIE</div>
+      <div id="chart-korea" class="chart"></div>
+    </div>
+    <div class="card">
+      <h3>AI数据中心 vs 加密挖矿 电力消耗</h3>
+      <div class="subtitle">TWh/年 | 来源：IEA + Cambridge BTC Index</div>
+      <div id="chart-power" class="chart"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== Tab 6: 今日要闻 ==================== -->
 <div id="tab-events" class="tab-pane">
   <div class="card">
     <h3>近期事件 (重要性 ≥ ⭐⭐⭐)</h3>
@@ -285,7 +382,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC"
                 <a href="https://www.cnbc.com/2026/05/07/coreweave-crwv-q1-earnings-report-2026.html" target="_blank">CoreWeave (CRWV) Q1 earnings report 2026 - CNBC</a>
                 <span class="severity-stars">⭐⭐⭐⭐⭐</span>
               </div>
-              <div class="event-meta">cnbc.com · 2026-05-11</div>
+              <div class="event-meta">cnbc.com · 2026-05-07</div>
             </div>
           </li>
           <li class="event-item">
@@ -296,16 +393,6 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC"
                 <span class="severity-stars">⭐⭐⭐⭐</span>
               </div>
               <div class="event-meta">brief.bismarckanalysis.com · 2026-05-11</div>
-            </div>
-          </li>
-          <li class="event-item">
-            <span class="event-badge badge-investment">投资</span>
-            <div class="event-content">
-              <div class="event-title">
-                <a href="https://pv-magazine-usa.com/2026/03/13/ai-datacenters-rewrite-the-solar-ppa-playbook/" target="_blank">AI datacenters rewrite the solar PPA playbook – pv magazine USA</a>
-                <span class="severity-stars">⭐⭐⭐⭐</span>
-              </div>
-              <div class="event-meta">pv-magazine-usa.com · 2026-05-11</div>
             </div>
           </li>
           <li class="event-item">
@@ -325,7 +412,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC"
                 <a href="https://247wallst.com/investing/2026/05/04/how-ai-data-centers-are-reshaping-the-power-market-and-the-4-plays-investors-are-making/" target="_blank">How AI Data Centers Are Reshaping the Power Market (And the 4 Plays Investors Are Making) - 24/7 Wall St.</a>
                 <span class="severity-stars">⭐⭐⭐⭐</span>
               </div>
-              <div class="event-meta">247wallst.com · 2026-05-11 · GOOGL</div>
+              <div class="event-meta">247wallst.com · 2026-05-04 · GOOGL</div>
             </div>
           </li>
           <li class="event-item">
@@ -345,7 +432,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC"
                 <a href="https://www.bloomberg.com/news/articles/2026-05-08/tsmc-sales-grow-17-5-on-extended-ai-buildout-boom" target="_blank">TSMC Sales Grow 17.5% on Extended AI Buildout Boom - Bloomberg</a>
                 <span class="severity-stars">⭐⭐⭐</span>
               </div>
-              <div class="event-meta">bloomberg.com · 2026-05-11 · TSM</div>
+              <div class="event-meta">bloomberg.com · 2026-05-08 · TSM</div>
             </div>
           </li>
           <li class="event-item">
@@ -362,30 +449,10 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC"
             <span class="event-badge badge-investment">投资</span>
             <div class="event-content">
               <div class="event-title">
-                <a href="https://www.cnbc.com/2026/04/10/tsmc-q1-record-revenue-ai-chip-demand-strong.html" target="_blank">TSMC posts record revenue as AI chip demand stays strong</a>
-                <span class="severity-stars">⭐⭐⭐</span>
-              </div>
-              <div class="event-meta">cnbc.com · 2026-05-11 · TSM</div>
-            </div>
-          </li>
-          <li class="event-item">
-            <span class="event-badge badge-investment">投资</span>
-            <div class="event-content">
-              <div class="event-title">
                 <a href="https://investor.nvidia.com/financial-info/financial-reports/default.aspx" target="_blank">Financial Reports - NVIDIA Investor Relations</a>
                 <span class="severity-stars">⭐⭐⭐</span>
               </div>
               <div class="event-meta">investor.nvidia.com · 2026-05-11 · NVDA</div>
-            </div>
-          </li>
-          <li class="event-item">
-            <span class="event-badge badge-investment">投资</span>
-            <div class="event-content">
-              <div class="event-title">
-                <a href="https://www.forbes.com/sites/tylerroush/2026/02/25/nvidia-earnings-top-expectations-on-record-data-center-revenue/" target="_blank">Nvidia Earnings: Data Center Revenue Surge Helps AI Giant Top Expectations</a>
-                <span class="severity-stars">⭐⭐⭐⭐</span>
-              </div>
-              <div class="event-meta">forbes.com · 2026-05-11 · NVDA</div>
             </div>
           </li>
           <li class="event-item">
@@ -465,17 +532,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC"
                 <a href="https://mtz.china.com/touzi/2026/0408/226381.html" target="_blank">国诚投顾：Token调用量亮眼，关注新游上线进度 - 中华网</a>
                 <span class="severity-stars">⭐⭐⭐⭐⭐</span>
               </div>
-              <div class="event-meta">mtz.china.com · 2026-05-11 · BYTEDANCE, ZHIPU</div>
-            </div>
-          </li>
-          <li class="event-item">
-            <span class="event-badge badge-token">Token</span>
-            <div class="event-content">
-              <div class="event-title">
-                <a href="https://news.cgtn.com/news/2026-03-23/China-s-AI-models-top-US-with-4-69-trillion-weekly-tokens-1LKFFIvDooo/p.html" target="_blank">China's AI models top US with 4.69 trillion weekly tokens - CGTN</a>
-                <span class="severity-stars">⭐⭐⭐⭐</span>
-              </div>
-              <div class="event-meta">news.cgtn.com · 2026-05-11</div>
+              <div class="event-meta">mtz.china.com · 2026-04-08 · BYTEDANCE, ZHIPU</div>
             </div>
           </li>
           <li class="event-item">
@@ -552,20 +609,10 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC"
             <span class="event-badge badge-capex">Capex</span>
             <div class="event-content">
               <div class="event-title">
-                <a href="https://www.nytimes.com/2026/01/28/technology/meta-earnings-ai-spending.html" target="_blank">Meta Forecasts Spending of at Least $115 Billion This Year</a>
-                <span class="severity-stars">⭐⭐⭐</span>
-              </div>
-              <div class="event-meta">nytimes.com · 2026-05-11 · META</div>
-            </div>
-          </li>
-          <li class="event-item">
-            <span class="event-badge badge-capex">Capex</span>
-            <div class="event-content">
-              <div class="event-title">
                 <a href="https://fortune.com/2026/04/29/meta-zuckerberg-145-billion-ai-spending-roi/" target="_blank">Meta just bumped its 2026 capex forecast up to as much as $145 ...</a>
                 <span class="severity-stars">⭐⭐⭐⭐⭐</span>
               </div>
-              <div class="event-meta">fortune.com · 2026-05-11 · META</div>
+              <div class="event-meta">fortune.com · 2026-04-29 · META</div>
             </div>
           </li>
           <li class="event-item">
@@ -684,7 +731,7 @@ function showTab(name) {
   setTimeout(() => window.dispatchEvent(new Event('resize')), 50);
 }
 
-const DATA = {"capex_quarters": ["2022 Q1", "2022 Q2", "2022 Q3", "2022 Q4", "2023 Q1", "2023 Q2", "2023 Q3", "2023 Q4", "2024 Q1", "2024 Q2", "2024 Q3", "2024 Q4", "2025 Q1", "2025 Q2", "2025 Q3", "2025 Q4", "2026 Q1"], "capex_series": {"AMZN": [14.3, 15.3, 16.1, 14.7, 14.0, 11.5, 12.5, 14.6, 14.9, 17.6, 22.6, 27.8, 24.3, 31.4, 34.2, 38.4, 44.0], "MSFT": [6.6, 6.3, 6.6, 7.4, 7.8, 8.9, 11.2, 11.5, 14.0, 13.9, 20.0, 22.6, 16.7, 24.2, 19.6, 19.4, 31.0], "GOOGL": [9.8, 6.8, 7.3, 7.6, 6.3, 6.9, 8.1, 11.0, 12.0, 13.2, 13.1, 14.3, 17.2, 22.4, 24.0, 21.4, 35.7], "META": [5.5, 7.7, 9.5, 9.2, 7.1, 6.4, 6.8, 7.9, 6.7, 8.5, 9.2, 14.8, 13.7, 17.0, 19.4, 18.9, 19.8]}, "annual_years": [2022, 2023, 2024, 2025, 2026, "2026 (指引)"], "annual_actual": {"AMZN": [60.4, 52.6, 82.9, 128.3, 44.0, 200.0], "MSFT": [26.9, 39.4, 70.5, 79.9, 31.0, 190.0], "GOOGL": [31.5, 32.3, 52.6, 85.0, 35.7, 185.0], "META": [31.9, 28.2, 39.2, 69.0, 19.8, 135.0]}, "q1_2026_pie": [{"name": "Amazon", "value": 44.0}, {"name": "Alphabet", "value": 35.7}, {"name": "Meta", "value": 19.8}, {"name": "Microsoft", "value": 31.0}], "guidance_dates": ["2026-01-29", "2026-02-04", "2026-02-06", "2026-04-29"], "guidance_series": {"AMZN": [null, null, 200.0, 200.0], "MSFT": [152.0, 152.0, 152.0, 190.0], "GOOGL": [null, 180.0, 180.0, 185.0], "META": [125.0, 125.0, 125.0, 135.0]}, "token_months": ["2024-01", "2024-05", "2024-10", "2025-04", "2025-05", "2025-06", "2025-07", "2025-08", "2025-09", "2025-10", "2025-11", "2025-12", "2026-01", "2026-02", "2026-03", "2026-04"], "token_series": {"gemini": [null, 9.7, null, 480.0, 600.0, 800.0, 980.0, 1050.0, 1150.0, 1300.0, 1450.0, 1600.0, 1800.0, 2000.0, 2200.0, 2400.0], "gpt": [null, null, null, null, null, null, null, null, null, 258.0, 320.0, 400.0, 480.0, 540.0, 648.0, 720.0], "doubao": [null, 3.6, null, null, null, null, null, null, null, 1200.0, 1400.0, 1890.0, 2100.0, 2700.0, 3600.0, 3900.0], "qwen": [null, null, null, null, null, 60.0, null, null, null, null, null, 150.0, 180.0, 240.0, 300.0, 450.0], "openrouter": [null, null, 0.04, 20.0, null, null, null, null, null, null, null, 12.0, 25.0, 56.0, 65.0, 80.0]}, "top10_week": "2026-04-13", "top10_names": ["MiMo-V2-Pro", "Claude Sonnet 4.6", "MiniMax M2.7", "DeepSeek V3.2", "Qwen 3.6 Plus", "Claude Opus 4.6", "GPT-5.4", "Gemini 3.1 Pro", "Kimi K2", "Gemini 3.1 Flash Lite"], "top10_data": [4.65, 2.18, 1.92, 1.22, 1.1, 1.01, 0.98, 0.87, 0.74, 0.68], "top10_colors": ["#EF4444", "#3B82F6", "#EF4444", "#EF4444", "#EF4444", "#3B82F6", "#3B82F6", "#3B82F6", "#EF4444", "#3B82F6"], "cnus_weeks": ["2026-02-09", "2026-03-16", "2026-04-13"], "cnus_cn": [72.3, 63.2, 62.7], "cnus_us": [27.7, 36.8, 37.3], "asset_dates": ["2024-06", "2024-07", "2024-08", "2024-09", "2024-10", "2024-11", "2024-12", "2025-01", "2025-02", "2025-03", "2025-04", "2025-05", "2025-06", "2025-07", "2025-08", "2025-09", "2025-10", "2025-11", "2025-12", "2026-01", "2026-02", "2026-03", "2026-04", "2026-05"], "asset_series": {"AMAT": [100.0, 89.9, 83.6, 85.6, 76.9, 74.0, 68.9, 76.4, 67.0, 61.5, 63.9, 66.4, 77.6, 76.3, 68.1, 86.8, 98.8, 106.9, 108.9, 136.6, 157.8, 144.8, 167.2, 184.5], "ANET": [100.0, 98.9, 100.8, 109.5, 110.3, 115.8, 126.1, 131.5, 106.2, 88.4, 93.9, 98.9, 116.8, 140.6, 155.8, 166.3, 180.0, 149.1, 149.5, 161.8, 152.4, 140.1, 197.1, 161.8], "ASML": [100.0, 91.6, 88.4, 81.5, 65.8, 67.1, 67.8, 72.3, 69.3, 64.8, 65.3, 72.0, 78.4, 67.9, 72.6, 94.7, 103.6, 103.6, 104.6, 139.1, 141.8, 129.1, 140.7, 155.7], "AVGO": [100.0, 100.1, 101.4, 107.4, 105.7, 101.0, 144.4, 137.8, 124.2, 104.3, 119.9, 150.8, 171.7, 182.9, 185.2, 205.5, 230.2, 251.0, 215.6, 206.4, 199.0, 192.8, 260.0, 267.8], "CEG": [100.0, 94.8, 98.2, 129.8, 131.3, 128.1, 111.7, 149.8, 125.1, 100.7, 111.6, 152.9, 161.2, 173.7, 153.8, 164.3, 188.2, 181.9, 176.4, 140.2, 164.7, 139.4, 156.3, 151.6], "CRWV": [null, null, null, null, null, null, null, null, null, 100.0, 111.4, 300.2, 439.8, 307.8, 277.9, 369.1, 360.6, 197.2, 193.1, 251.3, 214.6, 208.9, 301.0, 307.8], "MU": [100.0, 83.5, 73.2, 78.8, 75.8, 74.5, 64.0, 69.4, 71.2, 66.1, 58.5, 71.8, 93.7, 83.0, 90.5, 127.2, 170.1, 179.8, 217.0, 315.4, 313.5, 256.9, 393.2, 567.8], "NVDA": [100.0, 94.7, 96.6, 98.3, 107.5, 111.9, 108.7, 97.2, 101.1, 87.7, 88.2, 109.4, 127.9, 144.0, 141.0, 151.0, 163.9, 143.3, 151.0, 154.7, 143.4, 141.2, 161.5, 174.2], "TSM": [100.0, 95.4, 98.8, 99.9, 109.6, 106.2, 113.6, 120.4, 103.9, 95.5, 95.9, 111.2, 130.3, 139.0, 132.8, 160.7, 172.8, 167.7, 174.8, 190.2, 215.5, 194.4, 227.9, 236.9], "VRT": [100.0, 90.9, 95.9, 114.9, 126.2, 147.4, 131.2, 135.2, 109.9, 83.4, 98.6, 124.7, 148.3, 168.2, 147.3, 174.3, 222.8, 207.6, 187.1, 215.1, 294.4, 289.5, 379.5, 392.7], "VST": [100.0, 92.1, 99.4, 137.9, 145.3, 185.9, 160.4, 195.4, 155.5, 136.6, 150.8, 186.8, 225.4, 242.5, 219.9, 227.9, 219.0, 208.0, 187.6, 184.2, 202.2, 174.8, 183.6, 171.8]}, "mom_names": ["AMAT", "ANET", "ASML", "AVGO", "CEG", "CRWV", "MU", "NVDA", "TSM", "VRT", "VST"], "mom_values": [10.3, -17.9, 10.7, 3.0, -3.0, 2.3, 44.4, 7.9, 3.9, 3.5, -6.4]};
+const DATA = {"capex_quarters": ["2022 Q1", "2022 Q2", "2022 Q3", "2022 Q4", "2023 Q1", "2023 Q2", "2023 Q3", "2023 Q4", "2024 Q1", "2024 Q2", "2024 Q3", "2024 Q4", "2025 Q1", "2025 Q2", "2025 Q3", "2025 Q4", "2026 Q1"], "capex_series": {"AMZN": [14.3, 15.3, 16.1, 14.7, 14.0, 11.5, 12.5, 14.6, 14.9, 17.6, 22.6, 27.8, 24.3, 31.4, 34.2, 38.4, 44.0], "MSFT": [6.6, 6.3, 6.6, 7.4, 7.8, 8.9, 11.2, 11.5, 14.0, 13.9, 20.0, 22.6, 16.7, 24.2, 19.6, 19.4, 31.0], "GOOGL": [9.8, 6.8, 7.3, 7.6, 6.3, 6.9, 8.1, 11.0, 12.0, 13.2, 13.1, 14.3, 17.2, 22.4, 24.0, 21.4, 35.7], "META": [5.5, 7.7, 9.5, 9.2, 7.1, 6.4, 6.8, 7.9, 6.7, 8.5, 9.2, 14.8, 13.7, 17.0, 19.4, 18.9, 19.8]}, "annual_years": [2022, 2023, 2024, 2025, 2026, "2026 (指引)"], "annual_actual": {"AMZN": [60.4, 52.6, 82.9, 128.3, 44.0, 200.0], "MSFT": [26.9, 39.4, 70.5, 79.9, 31.0, 190.0], "GOOGL": [31.5, 32.3, 52.6, 85.0, 35.7, 185.0], "META": [31.9, 28.2, 39.2, 69.0, 19.8, 135.0]}, "q1_2026_pie": [{"name": "Amazon", "value": 44.0}, {"name": "Alphabet", "value": 35.7}, {"name": "Meta", "value": 19.8}, {"name": "Microsoft", "value": 31.0}], "guidance_dates": ["2026-01-29", "2026-02-04", "2026-02-06", "2026-04-29"], "guidance_series": {"AMZN": [null, null, 200.0, 200.0], "MSFT": [152.0, 152.0, 152.0, 190.0], "GOOGL": [null, 180.0, 180.0, 185.0], "META": [125.0, 125.0, 125.0, 135.0]}, "token_months": ["2024-01", "2024-05", "2024-10", "2025-04", "2025-05", "2025-06", "2025-07", "2025-08", "2025-09", "2025-10", "2025-11", "2025-12", "2026-01", "2026-02", "2026-03", "2026-04"], "token_series": {"gemini": [null, 9.7, null, 480.0, 600.0, 800.0, 980.0, 1050.0, 1150.0, 1300.0, 1450.0, 1600.0, 1800.0, 2000.0, 2200.0, 2400.0], "gpt": [null, null, null, null, null, null, null, null, null, 258.0, 320.0, 400.0, 480.0, 540.0, 648.0, 720.0], "doubao": [null, 3.6, null, null, null, null, null, null, null, 1200.0, 1400.0, 1890.0, 2100.0, 2700.0, 3600.0, 3900.0], "qwen": [null, null, null, null, null, 60.0, null, null, null, null, null, 150.0, 180.0, 240.0, 300.0, 450.0], "openrouter": [null, null, 0.04, 20.0, null, null, null, null, null, null, null, 12.0, 25.0, 56.0, 65.0, 80.0]}, "top10_week": "2026-04-13", "top10_names": ["MiMo-V2-Pro", "Claude Sonnet 4.6", "MiniMax M2.7", "DeepSeek V3.2", "Qwen 3.6 Plus", "Claude Opus 4.6", "GPT-5.4", "Gemini 3.1 Pro", "Kimi K2", "Gemini 3.1 Flash Lite"], "top10_data": [4.65, 2.18, 1.92, 1.22, 1.1, 1.01, 0.98, 0.87, 0.74, 0.68], "top10_colors": ["#EF4444", "#3B82F6", "#EF4444", "#EF4444", "#EF4444", "#3B82F6", "#3B82F6", "#3B82F6", "#EF4444", "#3B82F6"], "cnus_weeks": ["2026-02-09", "2026-03-16", "2026-04-13"], "cnus_cn": [72.3, 63.2, 62.7], "cnus_us": [27.7, 36.8, 37.3], "asset_dates": ["2024-06", "2024-07", "2024-08", "2024-09", "2024-10", "2024-11", "2024-12", "2025-01", "2025-02", "2025-03", "2025-04", "2025-05", "2025-06", "2025-07", "2025-08", "2025-09", "2025-10", "2025-11", "2025-12", "2026-01", "2026-02", "2026-03", "2026-04", "2026-05"], "asset_series": {"AMAT": [100.0, 89.9, 83.6, 85.6, 76.9, 74.0, 68.9, 76.4, 67.0, 61.5, 63.9, 66.4, 77.6, 76.3, 68.1, 86.8, 98.8, 106.9, 108.9, 136.6, 157.8, 144.8, 167.2, 184.5], "ANET": [100.0, 98.9, 100.8, 109.5, 110.3, 115.8, 126.1, 131.5, 106.2, 88.4, 93.9, 98.9, 116.8, 140.6, 155.8, 166.3, 180.0, 149.1, 149.5, 161.8, 152.4, 140.1, 197.1, 161.8], "ASML": [100.0, 91.6, 88.4, 81.5, 65.8, 67.1, 67.8, 72.3, 69.3, 64.8, 65.3, 72.0, 78.4, 67.9, 72.6, 94.7, 103.6, 103.6, 104.6, 139.1, 141.8, 129.1, 140.7, 155.7], "AVGO": [100.0, 100.1, 101.4, 107.4, 105.7, 101.0, 144.4, 137.8, 124.2, 104.3, 119.9, 150.8, 171.7, 182.9, 185.2, 205.5, 230.2, 251.0, 215.6, 206.4, 199.0, 192.8, 260.0, 267.8], "CEG": [100.0, 94.8, 98.2, 129.8, 131.3, 128.1, 111.7, 149.8, 125.1, 100.7, 111.6, 152.9, 161.2, 173.7, 153.8, 164.3, 188.2, 181.9, 176.4, 140.2, 164.7, 139.4, 156.3, 151.6], "CRWV": [null, null, null, null, null, null, null, null, null, 100.0, 111.4, 300.2, 439.8, 307.8, 277.9, 369.1, 360.6, 197.2, 193.1, 251.3, 214.6, 208.9, 301.0, 307.8], "MU": [100.0, 83.5, 73.2, 78.8, 75.8, 74.5, 64.0, 69.4, 71.2, 66.1, 58.5, 71.8, 93.7, 83.0, 90.5, 127.2, 170.1, 179.8, 217.0, 315.4, 313.5, 256.9, 393.2, 567.8], "NVDA": [100.0, 94.7, 96.6, 98.3, 107.5, 111.9, 108.7, 97.2, 101.1, 87.7, 88.2, 109.4, 127.9, 144.0, 141.0, 151.0, 163.9, 143.3, 151.0, 154.7, 143.4, 141.2, 161.5, 174.2], "TSM": [100.0, 95.4, 98.8, 99.9, 109.6, 106.2, 113.6, 120.4, 103.9, 95.5, 95.9, 111.2, 130.3, 139.0, 132.8, 160.7, 172.8, 167.7, 174.8, 190.2, 215.5, 194.4, 227.9, 236.9], "VRT": [100.0, 90.9, 95.9, 114.9, 126.2, 147.4, 131.2, 135.2, 109.9, 83.4, 98.6, 124.7, 148.3, 168.2, 147.3, 174.3, 222.8, 207.6, 187.1, 215.1, 294.4, 289.5, 379.5, 392.7], "VST": [100.0, 92.1, 99.4, 137.9, 145.3, 185.9, 160.4, 195.4, 155.5, 136.6, 150.8, 186.8, 225.4, 242.5, 219.9, 227.9, 219.0, 208.0, 187.6, 184.2, 202.2, 174.8, 183.6, 171.8]}, "mom_names": ["AMAT", "ANET", "ASML", "AVGO", "CEG", "CRWV", "MU", "NVDA", "TSM", "VRT", "VST"], "mom_values": [10.3, -17.9, 10.7, 3.0, -3.0, 2.3, 44.4, 7.9, 3.9, 3.5, -6.4], "cn_quarters": ["2024 Q1", "2024 Q2", "2024 Q3", "2024 Q4", "2025 Q1", "2025 Q2", "2025 Q3", "2025 Q4", "2026 Q1"], "cn_series": {"Alibaba": [116.0, 119.0, 175.0, 318.0, 245.0, 386.0, 510.0, 600.0, 720.0], "Tencent": [144.0, 84.0, 171.0, 366.0, 275.0, 191.0, 280.0, 380.0, 420.0], "ByteDance": [200.0, 250.0, 380.0, 470.0, 550.0, 700.0, 850.0, 1100.0, 1300.0], "Baidu": [32.0, 35.0, 40.0, 55.0, 65.0, 70.0, 78.0, 95.0, 110.0]}, "cn_us_years": ["2024", "2025", "2026"], "us_annual_usd": [245.2, 362.2, 710.0], "cn_annual_usd": [410.4, 897.9, 1436.6], "cn_2025_pie": [{"name": "Alibaba", "value": 1741.0}, {"name": "Tencent", "value": 1126.0}, {"name": "ByteDance", "value": 3200.0}, {"name": "Baidu", "value": 308.0}], "tsmc_months": ["2024-01", "2024-02", "2024-03", "2024-04", "2024-05", "2024-06", "2024-07", "2024-08", "2024-09", "2024-10", "2024-11", "2024-12", "2025-01", "2025-02", "2025-03", "2025-04", "2025-05", "2025-06", "2025-07", "2025-08", "2025-09", "2025-10", "2025-11", "2025-12", "2026-01", "2026-02", "2026-03", "2026-04"], "tsmc_revenue": [6.74, 5.68, 6.1, 7.38, 7.17, 6.5, 8.03, 7.84, 7.87, 9.82, 8.62, 8.69, 9.16, 8.12, 8.93, 10.93, 10.02, 8.24, 10.1, 10.49, 10.31, 11.48, 10.94, 9.8, 10.7, 10.02, 11.17, 12.14], "tsmc_yoy": [7.9, 11.3, 34.3, 59.6, 30.0, 32.9, 44.7, 32.8, 39.6, 29.2, 34.0, 57.8, 35.8, 43.1, 46.5, 48.1, 39.6, 26.9, 25.8, 33.8, 31.0, 17.0, 26.9, 12.7, 16.8, 23.3, 25.0, 11.1], "korea_months": ["2024-01", "2024-02", "2024-03", "2024-04", "2024-05", "2024-06", "2024-07", "2024-08", "2024-09", "2024-10", "2024-11", "2024-12", "2025-01", "2025-02", "2025-03", "2025-04", "2025-05", "2025-06", "2025-07", "2025-08", "2025-09", "2025-10", "2025-11", "2025-12", "2026-01", "2026-02", "2026-03", "2026-04"], "korea_total": [9.4, 9.6, 11.7, 11.0, 11.4, 13.4, 11.7, 11.9, 13.6, 12.5, 12.5, 14.5, 10.1, 9.6, 13.1, 11.5, 13.8, 14.9, 14.0, 15.1, 16.5, 16.9, 16.0, 19.7, 15.4, 14.8, 18.5, 18.0], "korea_memory": [6.4, 6.4, 8.4, 7.8, 7.8, 9.8, 8.8, 8.7, 10.1, 9.1, 9.3, 11.0, 7.3, 6.6, 9.7, 8.4, 10.0, 11.0, 10.6, 11.5, 12.7, 13.2, 12.5, 15.6, 12.3, 11.8, 14.9, 14.5], "power_years": ["2022", "2023", "2024", "2025", "2026", "2027"], "power_ai": [50.0, 85.0, 165.0, 320.0, 550.0, 850.0], "power_btc": [110.0, 135.0, 175.0, 195.0, 210.0, 220.0], "power_crypto": [30.0, 35.0, 40.0, 45.0, 50.0, 55.0]};
 
 // ============== Chart 1: 季度Capex趋势 ==============
 const chart1 = echarts.init(document.getElementById('chart-quarterly'));
@@ -861,9 +908,109 @@ chart10.setOption({
   }]
 });
 
+// ============== Chart 11: 中国云季度Capex ==============
+const chartCN1 = echarts.init(document.getElementById('chart-cn-quarterly'));
+chartCN1.setOption({
+  tooltip: { trigger: 'axis', formatter: function(params) {
+    let s = params[0].axisValue + '<br/>';
+    params.forEach(p => {
+      if (p.value != null) s += `<span style="display:inline-block;width:8px;height:8px;background:${p.color};border-radius:50%;margin-right:6px"></span>${p.seriesName}: ¥${p.value}亿<br/>`;
+    });
+    return s;
+  }},
+  legend: { top: 0, data: ['阿里巴巴', '腾讯', '字节跳动', '百度'] },
+  grid: { left: 60, right: 30, bottom: 50, top: 40 },
+  xAxis: { type: 'category', data: DATA.cn_quarters, axisLabel: { rotate: 45, fontSize: 11 } },
+  yAxis: { type: 'value', name: '亿人民币', nameTextStyle: { fontSize: 11 } },
+  series: [
+    { name: '阿里巴巴', type: 'line', smooth: true, data: DATA.cn_series.Alibaba, itemStyle: { color: '#FF6A00' } },
+    { name: '腾讯', type: 'line', smooth: true, data: DATA.cn_series.Tencent, itemStyle: { color: '#0095FF' } },
+    { name: '字节跳动', type: 'line', smooth: true, data: DATA.cn_series.ByteDance, itemStyle: { color: '#000000' } },
+    { name: '百度', type: 'line', smooth: true, data: DATA.cn_series.Baidu, itemStyle: { color: '#2932E1' } },
+  ]
+});
+
+// ============== Chart 12: 中美年度Capex对比 ==============
+const chartCN2 = echarts.init(document.getElementById('chart-cn-us-compare'));
+chartCN2.setOption({
+  tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+  legend: { top: 0, data: ['美国四大', '中国四大'] },
+  grid: { left: 50, right: 20, bottom: 30, top: 40 },
+  xAxis: { type: 'category', data: DATA.cn_us_years },
+  yAxis: { type: 'value', name: '亿美元' },
+  series: [
+    { name: '美国四大', type: 'bar', data: DATA.us_annual_usd, itemStyle: { color: '#3B82F6' } },
+    { name: '中国四大', type: 'bar', data: DATA.cn_annual_usd, itemStyle: { color: '#EF4444' } }
+  ]
+});
+
+// ============== Chart 13: 中国云2025占比 ==============
+const chartCN3 = echarts.init(document.getElementById('chart-cn-pie'));
+chartCN3.setOption({
+  tooltip: { trigger: 'item', formatter: '{b}: ¥{c}B ({d}%)' },
+  legend: { bottom: 0 },
+  series: [{
+    type: 'pie', radius: ['40%', '70%'],
+    data: DATA.cn_2025_pie,
+    label: { formatter: '{b}\n¥{c}亿' }
+  }]
+});
+
+// ============== Chart 14: TSMC月度营收 ==============
+const chartTSMC = echarts.init(document.getElementById('chart-tsmc'));
+chartTSMC.setOption({
+  tooltip: { trigger: 'axis', formatter: function(p) {
+    return p[0].axisValue + '<br/>营收: $' + p[0].value + 'B<br/>YoY: ' + (DATA.tsmc_yoy[p[0].dataIndex] || 0) + '%';
+  }},
+  grid: { left: 60, right: 60, bottom: 50, top: 30 },
+  xAxis: { type: 'category', data: DATA.tsmc_months, axisLabel: { rotate: 45, fontSize: 11 } },
+  yAxis: [
+    { type: 'value', name: '亿美元', position: 'left' },
+    { type: 'value', name: 'YoY %', position: 'right', axisLabel: { formatter: '{value}%' } },
+  ],
+  series: [
+    { type: 'bar', data: DATA.tsmc_revenue, itemStyle: { color: '#06B6D4' }, name: '月营收' },
+    { type: 'line', yAxisIndex: 1, data: DATA.tsmc_yoy, itemStyle: { color: '#F59E0B' }, name: 'YoY', smooth: true },
+  ]
+});
+
+// ============== Chart 15: 韩国半导体出口 ==============
+const chartKorea = echarts.init(document.getElementById('chart-korea'));
+chartKorea.setOption({
+  tooltip: { trigger: 'axis' },
+  legend: { top: 0, data: ['总出口', '存储芯片'] },
+  grid: { left: 50, right: 30, bottom: 50, top: 40 },
+  xAxis: { type: 'category', data: DATA.korea_months, axisLabel: { rotate: 45, fontSize: 11 } },
+  yAxis: { type: 'value', name: '亿美元' },
+  series: [
+    { name: '总出口', type: 'line', data: DATA.korea_total, itemStyle: { color: '#3B82F6' }, smooth: true, areaStyle: {opacity: 0.2} },
+    { name: '存储芯片', type: 'line', data: DATA.korea_memory, itemStyle: { color: '#EF4444' }, smooth: true },
+  ]
+});
+
+// ============== Chart 16: AI vs BTC 电力 ==============
+const chartPower = echarts.init(document.getElementById('chart-power'));
+chartPower.setOption({
+  tooltip: { trigger: 'axis', formatter: function(p) {
+    let s = p[0].axisValue + '<br/>';
+    p.forEach(x => { s += `${x.seriesName}: ${x.value} TWh<br/>` });
+    return s;
+  }},
+  legend: { top: 0, data: ['AI数据中心', 'BTC挖矿', '其他加密'] },
+  grid: { left: 50, right: 30, bottom: 30, top: 40 },
+  xAxis: { type: 'category', data: DATA.power_years },
+  yAxis: { type: 'value', name: 'TWh/年' },
+  series: [
+    { name: 'AI数据中心', type: 'bar', data: DATA.power_ai, itemStyle: { color: '#10B981' } },
+    { name: 'BTC挖矿', type: 'bar', data: DATA.power_btc, itemStyle: { color: '#F59E0B' } },
+    { name: '其他加密', type: 'bar', data: DATA.power_crypto, itemStyle: { color: '#A78BFA' } },
+  ]
+});
+
 // Responsive
 window.addEventListener('resize', () => {
-  [chart1, chart2, chart3, chart4, chart5, chart6, chart7, chart8, chart9, chart10].forEach(c => c.resize());
+  [chart1, chart2, chart3, chart4, chart5, chart6, chart7, chart8, chart9, chart10,
+   chartCN1, chartCN2, chartCN3, chartTSMC, chartKorea, chartPower].forEach(c => c.resize());
 });
 </script>
 

@@ -7,6 +7,7 @@
 3. 投资关联 (NVDA订单、TSM营收、HBM出货、电力)
 """
 import os
+import re
 import json
 import hashlib
 import sys
@@ -15,6 +16,32 @@ from datetime import datetime, timedelta
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 from db import get_conn
+
+# URL 中的日期模式（按可信度排序）
+URL_DATE_PATTERNS = [
+    re.compile(r"/(\d{4})/(\d{2})(\d{2})/"),        # /2026/0408/
+    re.compile(r"/(\d{4})-(\d{2})-(\d{2})/"),       # /2026-04-08/
+    re.compile(r"/(\d{4})/(\d{2})/(\d{2})/"),       # /2026/04/08/
+    re.compile(r"/(\d{4})(\d{2})(\d{2})_"),         # /20260408_
+    re.compile(r"-(\d{4})-(\d{2})-(\d{2})\."),      # -2026-04-08.html
+]
+
+
+def extract_date_from_url(url: str) -> str:
+    """从URL中提取日期，找不到返回空字符串"""
+    if not url:
+        return ""
+    for pat in URL_DATE_PATTERNS:
+        m = pat.search(url)
+        if m:
+            try:
+                y, mo, d = m.groups()
+                # 合理性检查
+                if 2020 <= int(y) <= 2030 and 1 <= int(mo) <= 12 and 1 <= int(d) <= 31:
+                    return f"{y}-{mo}-{d}"
+            except Exception:
+                continue
+    return ""
 
 try:
     from tavily import TavilyClient
@@ -174,8 +201,24 @@ def severity_score(title: str, content: str, category: str) -> int:
     return 2
 
 
-def fetch_all_news(days: int = 3, max_per_query: int = 5):
-    """主入口：执行所有搜索"""
+def is_too_old(published: str, max_days: int = 7) -> bool:
+    """硬过滤：超过 max_days 天的新闻丢弃（Tavily的days参数不可靠）"""
+    if not published:
+        return True  # 没有日期的也丢
+    try:
+        # 支持 "2026-04-08" 或 "2026-04-08T12:00:00"
+        d = datetime.fromisoformat(published.split("T")[0])
+        return (datetime.now() - d).days > max_days
+    except Exception:
+        return True
+
+
+def fetch_all_news(days: int = 3, max_per_query: int = 5, max_age_days: int = 7):
+    """主入口：执行所有搜索
+
+    days: Tavily search 时间窗口
+    max_age_days: 硬过滤上限（Tavily返回结果中超过此天数的丢弃）
+    """
     api_key = os.environ.get("TAVILY_API_KEY")
     if not api_key or not HAS_TAVILY:
         print("⚠ TAVILY_API_KEY missing or tavily not installed - skipping fetch")
@@ -188,6 +231,7 @@ def fetch_all_news(days: int = 3, max_per_query: int = 5):
     all_queries = CAPEX_QUERIES + TOKEN_QUERIES + INVESTMENT_QUERIES
     new_count = 0
     dup_count = 0
+    stale_count = 0
 
     for i, q in enumerate(all_queries):
         category = classify_category(i, len(CAPEX_QUERIES), len(TOKEN_QUERIES))
@@ -198,10 +242,30 @@ def fetch_all_news(days: int = 3, max_per_query: int = 5):
             title = r.get("title", "").strip()
             url = normalize_url(r.get("url", ""))
             content = r.get("content", "")[:500]
-            published = r.get("published_date") or datetime.now().strftime("%Y-%m-%d")
+            tavily_pub = r.get("published_date") or ""
 
             if not title or not url:
                 continue
+
+            # 优先级：URL内日期 > Tavily published_date
+            url_date = extract_date_from_url(url)
+            published = url_date or tavily_pub
+
+            # 如果URL有日期且早于Tavily日期，说明Tavily报告的是索引日期，以URL为准
+            if url_date and tavily_pub:
+                try:
+                    url_d = datetime.fromisoformat(url_date)
+                    tav_d = datetime.fromisoformat(tavily_pub.split("T")[0])
+                    if url_d < tav_d:
+                        published = url_date  # 用URL内的真实日期
+                except Exception:
+                    pass
+
+            # 硬过滤：丢弃过时新闻
+            if is_too_old(published, max_days=max_age_days):
+                stale_count += 1
+                continue
+
             h = event_hash(title, url)
             if is_duplicate(cur, h):
                 dup_count += 1
@@ -226,7 +290,7 @@ def fetch_all_news(days: int = 3, max_per_query: int = 5):
 
     conn.commit()
     conn.close()
-    print(f"\n✅ fetched: {new_count} new events, {dup_count} duplicates")
+    print(f"\n✅ fetched: {new_count} new events, {dup_count} duplicates, {stale_count} stale (>{max_age_days}d)")
     return new_count
 
 
