@@ -370,7 +370,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC"
   <div class="grid-1">
     <div class="card">
       <h3>季度Capex趋势 (2022 Q1 - 2026 Q1)</h3>
-      <div class="subtitle">单位：亿美元 | 数据来源：各公司10-Q/10-K财报</div>
+      <div class="subtitle">单位：十亿美元(USD billions) | 数据来源：各公司10-Q/10-K财报</div>
       <div id="chart-quarterly" class="chart chart-tall"></div>
     </div>
   </div>
@@ -401,39 +401,39 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC"
 <div id="tab-china" class="tab-pane">
   <div class="stat-grid">
     <div class="stat-card">
-      <div class="stat-value">¥__CN_CAPEX_2025__B</div>
+      <div class="stat-value">$__CN_CAPEX_2025_USD__B</div>
       <div class="stat-label">中国四大云 2025 Capex合计</div>
-      <div class="stat-delta">折合 ~$__CN_CAPEX_2025_USD__B</div>
+      <div class="stat-delta">折合 ¥__CN_CAPEX_2025__B</div>
     </div>
     <div class="stat-card">
-      <div class="stat-value">¥__CN_CAPEX_Q1__B</div>
+      <div class="stat-value">$__CN_CAPEX_Q1_USD__B</div>
       <div class="stat-label">2026 Q1 单季</div>
       <div class="stat-delta">YoY __CN_CAPEX_Q1_YOY__</div>
     </div>
     <div class="stat-card">
-      <div class="stat-value">__BYTEDANCE_Q1__B</div>
+      <div class="stat-value">$__BYTEDANCE_Q1_USD__B</div>
       <div class="stat-label">字节单家 Q1 Capex</div>
-      <div class="stat-delta">大幅领先</div>
+      <div class="stat-delta">国内大幅领先</div>
     </div>
     <div class="stat-card">
       <div class="stat-value">__CN_VS_US_RATIO__%</div>
       <div class="stat-label">中/美Capex比例</div>
-      <div class="stat-delta">基建追赶</div>
+      <div class="stat-delta">基建追赶中</div>
     </div>
   </div>
 
   <div class="grid-1">
     <div class="card">
       <h3>中国四大云季度Capex趋势</h3>
-      <div class="subtitle">单位：亿人民币 | 阿里/腾讯/字节/百度</div>
+      <div class="subtitle">单位：十亿美元(USD billions) | 阿里/腾讯/字节/百度</div>
       <div id="chart-cn-quarterly" class="chart chart-tall"></div>
     </div>
   </div>
 
   <div class="grid">
     <div class="card">
-      <h3>年度Capex对比 (人民币 vs 美元)</h3>
-      <div class="subtitle">中美云厂商规模差距</div>
+      <h3>中美云厂商年度Capex对比</h3>
+      <div class="subtitle">单位：十亿美元(USD billions) | 中国大致是美国的 17%-30%</div>
       <div id="chart-cn-us-compare" class="chart"></div>
     </div>
     <div class="card">
@@ -545,7 +545,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC"
 
   <div class="grid-1">
     <div class="card">
-      <h3>TSMC月度营收 (亿美元) — AI芯片代工景气度</h3>
+      <h3>TSMC月度营收 (十亿美元 USD billions) — AI芯片代工景气度</h3>
       <div class="subtitle">每月10日左右公布 | 数据来源：TSMC IR</div>
       <div id="chart-tsmc" class="chart"></div>
     </div>
@@ -604,7 +604,7 @@ chart1.setOption({
   grid: { left: 50, right: 30, bottom: 50, top: 40 },
   xAxis: { type: 'category', data: DATA.capex_quarters,
            axisLabel: { rotate: 45, fontSize: 11 } },
-  yAxis: { type: 'value', name: '亿美元', nameTextStyle: { fontSize: 11 } },
+  yAxis: { type: 'value', name: '十亿美元', nameTextStyle: { fontSize: 11 }, axisLabel: { formatter: '${value}B' } },
   series: [
     { name: 'Amazon', type: 'line', smooth: true, data: DATA.capex_series.AMZN,
       itemStyle: { color: '#FF9900' }, lineStyle: { width: 2 } },
@@ -620,11 +620,16 @@ chart1.setOption({
 // ============== Chart 2: 年度堆叠 ==============
 const chart2 = echarts.init(document.getElementById('chart-annual'));
 chart2.setOption({
-  tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+  tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' },
+             formatter: function(params) {
+               let s = params[0].axisValue + '<br/>';
+               params.forEach(p => { if (p.value != null) s += `${p.seriesName}: $${p.value}B<br/>` });
+               return s;
+             }},
   legend: { top: 0 },
   grid: { left: 50, right: 20, bottom: 30, top: 40 },
   xAxis: { type: 'category', data: DATA.annual_years },
-  yAxis: { type: 'value', name: '亿美元' },
+  yAxis: { type: 'value', name: '十亿美元', axisLabel: { formatter: '${value}B' } },
   series: ['AMZN', 'MSFT', 'GOOGL', 'META'].map(c => ({
     name: ({AMZN: 'Amazon', MSFT: 'Microsoft', GOOGL: 'Alphabet', META: 'Meta'})[c],
     type: 'bar', stack: 'total', data: DATA.annual_actual[c],
@@ -647,11 +652,16 @@ chart3.setOption({
 // ============== Chart 4: 指引时间线 ==============
 const chart4 = echarts.init(document.getElementById('chart-guidance'));
 chart4.setOption({
-  tooltip: { trigger: 'axis' },
+  tooltip: { trigger: 'axis',
+             formatter: function(params) {
+               let s = params[0].axisValue + '<br/>';
+               params.forEach(p => { if (p.value != null) s += `${p.seriesName}: $${p.value}B<br/>` });
+               return s;
+             }},
   legend: { top: 0 },
   grid: { left: 50, right: 30, bottom: 30, top: 40 },
   xAxis: { type: 'category', data: DATA.guidance_dates },
-  yAxis: { type: 'value', name: '亿美元' },
+  yAxis: { type: 'value', name: '十亿美元', axisLabel: { formatter: '${value}B' } },
   series: ['AMZN', 'MSFT', 'GOOGL', 'META'].map(c => ({
     name: ({AMZN: 'Amazon', MSFT: 'Microsoft', GOOGL: 'Alphabet', META: 'Meta'})[c],
     type: 'line', step: 'end',
@@ -765,55 +775,60 @@ chart10.setOption({
   }]
 });
 
-// ============== Chart 11: 中国云季度Capex ==============
+// ============== Chart 11: 中国云季度Capex (USD) ==============
 const chartCN1 = echarts.init(document.getElementById('chart-cn-quarterly'));
 chartCN1.setOption({
   tooltip: { trigger: 'axis', formatter: function(params) {
     let s = params[0].axisValue + '<br/>';
     params.forEach(p => {
-      if (p.value != null) s += `<span style="display:inline-block;width:8px;height:8px;background:${p.color};border-radius:50%;margin-right:6px"></span>${p.seriesName}: ¥${p.value}亿<br/>`;
+      if (p.value != null) s += `<span style="display:inline-block;width:8px;height:8px;background:${p.color};border-radius:50%;margin-right:6px"></span>${p.seriesName}: $${p.value}B<br/>`;
     });
     return s;
   }},
   legend: { top: 0, data: ['阿里巴巴', '腾讯', '字节跳动', '百度'] },
   grid: { left: 60, right: 30, bottom: 50, top: 40 },
   xAxis: { type: 'category', data: DATA.cn_quarters, axisLabel: { rotate: 45, fontSize: 11 } },
-  yAxis: { type: 'value', name: '亿人民币', nameTextStyle: { fontSize: 11 } },
+  yAxis: { type: 'value', name: '十亿美元', nameTextStyle: { fontSize: 11 }, axisLabel: { formatter: '${value}B' } },
   series: [
-    { name: '阿里巴巴', type: 'line', smooth: true, data: DATA.cn_series.Alibaba, itemStyle: { color: '#FF6A00' } },
-    { name: '腾讯', type: 'line', smooth: true, data: DATA.cn_series.Tencent, itemStyle: { color: '#0095FF' } },
-    { name: '字节跳动', type: 'line', smooth: true, data: DATA.cn_series.ByteDance, itemStyle: { color: '#000000' } },
-    { name: '百度', type: 'line', smooth: true, data: DATA.cn_series.Baidu, itemStyle: { color: '#2932E1' } },
+    { name: '阿里巴巴', type: 'line', smooth: true, data: DATA.cn_series_usd.Alibaba, itemStyle: { color: '#FF6A00' } },
+    { name: '腾讯', type: 'line', smooth: true, data: DATA.cn_series_usd.Tencent, itemStyle: { color: '#0095FF' } },
+    { name: '字节跳动', type: 'line', smooth: true, data: DATA.cn_series_usd.ByteDance, itemStyle: { color: '#000000' } },
+    { name: '百度', type: 'line', smooth: true, data: DATA.cn_series_usd.Baidu, itemStyle: { color: '#2932E1' } },
   ]
 });
 
-// ============== Chart 12: 中美年度Capex对比 ==============
+// ============== Chart 12: 中美年度Capex对比 (USD) ==============
 const chartCN2 = echarts.init(document.getElementById('chart-cn-us-compare'));
 chartCN2.setOption({
-  tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+  tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' },
+             formatter: function(p) {
+               let s = p[0].axisValue + '<br/>';
+               p.forEach(x => { s += `${x.seriesName}: $${x.value}B<br/>` });
+               return s;
+             }},
   legend: { top: 0, data: ['美国四大', '中国四大'] },
-  grid: { left: 50, right: 20, bottom: 30, top: 40 },
+  grid: { left: 60, right: 20, bottom: 30, top: 40 },
   xAxis: { type: 'category', data: DATA.cn_us_years },
-  yAxis: { type: 'value', name: '亿美元' },
+  yAxis: { type: 'value', name: '十亿美元', axisLabel: { formatter: '${value}B' } },
   series: [
     { name: '美国四大', type: 'bar', data: DATA.us_annual_usd, itemStyle: { color: '#3B82F6' } },
-    { name: '中国四大', type: 'bar', data: DATA.cn_annual_usd, itemStyle: { color: '#EF4444' } }
+    { name: '中国四大', type: 'bar', data: DATA.cn_annual_usd_only, itemStyle: { color: '#EF4444' } }
   ]
 });
 
-// ============== Chart 13: 中国云2025占比 ==============
+// ============== Chart 13: 中国云2025占比 (USD) ==============
 const chartCN3 = echarts.init(document.getElementById('chart-cn-pie'));
 chartCN3.setOption({
-  tooltip: { trigger: 'item', formatter: '{b}: ¥{c}B ({d}%)' },
+  tooltip: { trigger: 'item', formatter: '{b}: ${c}B ({d}%)' },
   legend: { bottom: 0 },
   series: [{
     type: 'pie', radius: ['40%', '70%'],
-    data: DATA.cn_2025_pie,
-    label: { formatter: '{b}\n¥{c}亿' }
+    data: DATA.cn_2025_pie_usd,
+    label: { formatter: '{b}\n${c}B' }
   }]
 });
 
-// ============== Chart 14: TSMC月度营收 ==============
+// ============== Chart 14: TSMC月度营收 (USD) ==============
 const chartTSMC = echarts.init(document.getElementById('chart-tsmc'));
 chartTSMC.setOption({
   tooltip: { trigger: 'axis', formatter: function(p) {
@@ -822,7 +837,7 @@ chartTSMC.setOption({
   grid: { left: 60, right: 60, bottom: 50, top: 30 },
   xAxis: { type: 'category', data: DATA.tsmc_months, axisLabel: { rotate: 45, fontSize: 11 } },
   yAxis: [
-    { type: 'value', name: '亿美元', position: 'left' },
+    { type: 'value', name: '十亿美元', position: 'left', axisLabel: { formatter: '${value}B' } },
     { type: 'value', name: 'YoY %', position: 'right', axisLabel: { formatter: '{value}%' } },
   ],
   series: [
@@ -831,14 +846,18 @@ chartTSMC.setOption({
   ]
 });
 
-// ============== Chart 15: 韩国半导体出口 ==============
+// ============== Chart 15: 韩国半导体出口 (USD) ==============
 const chartKorea = echarts.init(document.getElementById('chart-korea'));
 chartKorea.setOption({
-  tooltip: { trigger: 'axis' },
+  tooltip: { trigger: 'axis', formatter: function(p) {
+    let s = p[0].axisValue + '<br/>';
+    p.forEach(x => { s += `${x.seriesName}: $${x.value}B<br/>` });
+    return s;
+  }},
   legend: { top: 0, data: ['总出口', '存储芯片'] },
-  grid: { left: 50, right: 30, bottom: 50, top: 40 },
+  grid: { left: 60, right: 30, bottom: 50, top: 40 },
   xAxis: { type: 'category', data: DATA.korea_months, axisLabel: { rotate: 45, fontSize: 11 } },
-  yAxis: { type: 'value', name: '亿美元' },
+  yAxis: { type: 'value', name: '十亿美元', axisLabel: { formatter: '${value}B' } },
   series: [
     { name: '总出口', type: 'line', data: DATA.korea_total, itemStyle: { color: '#3B82F6' }, smooth: true, areaStyle: {opacity: 0.2} },
     { name: '存储芯片', type: 'line', data: DATA.korea_memory, itemStyle: { color: '#EF4444' }, smooth: true },
@@ -984,21 +1003,21 @@ def main():
             guidance_2026[g["company"]] = g["guidance_point_billion"] or 0
     capex_2025 = round(sum(r["capex_billion_usd"] for r in capex_q if r["calendar_year"] == 2025), 1)
 
-    # ---------- 中国云数据加工 ----------
+    # ---------- 中国云数据加工 (统一 USD) ----------
     cn_companies = ["Alibaba", "Tencent", "ByteDance", "Baidu"]
     cn_quarters = sorted(set(f"{r['calendar_year']} Q{r['calendar_quarter']}" for r in china_capex))
-    cn_series = {c: [] for c in cn_companies}
+    cn_series_usd = {c: [] for c in cn_companies}
     for q in cn_quarters:
         yr, qt = q.split(" Q")
         for c in cn_companies:
             match = [r for r in china_capex if r["company"] == c
                      and r["calendar_year"] == int(yr) and r["calendar_quarter"] == int(qt)]
-            cn_series[c].append(match[0]["capex_billion_cny"] if match else None)
+            cn_series_usd[c].append(match[0]["capex_billion_usd"] if match else None)
 
-    # 中美年度对比
+    # 中美年度对比 (USD)
     years_cmp = [2024, 2025, 2026]
     us_annual_usd = []
-    cn_annual_usd = []
+    cn_annual_usd_only = []
     for y in years_cmp:
         us_total = sum(r["capex_billion_usd"] for r in capex_q if r["calendar_year"] == y)
         cn_total = sum(r["capex_billion_usd"] or 0 for r in china_capex if r["calendar_year"] == y)
@@ -1006,31 +1025,32 @@ def main():
         if y == 2026:
             us_q1 = us_total
             cn_q1 = cn_total
-            # 用2026指引代替
-            us_total = sum(guidance_2026.values())
+            us_total = sum(guidance_2026.values())  # 用2026指引代替
             cn_total = cn_q1 * 4  # 粗略外推
         us_annual_usd.append(round(us_total, 1))
-        cn_annual_usd.append(round(cn_total, 1))
+        cn_annual_usd_only.append(round(cn_total, 1))
 
-    # 2025中国云占比
-    cn_2025_pie = []
+    # 2025中国云占比 (USD)
+    cn_2025_pie_usd = []
     for c in cn_companies:
-        v = sum(r["capex_billion_cny"] for r in china_capex
+        v = sum(r["capex_billion_usd"] or 0 for r in china_capex
                 if r["company"] == c and r["calendar_year"] == 2025)
         if v > 0:
-            cn_2025_pie.append({"name": c, "value": round(v, 1)})
+            cn_2025_pie_usd.append({"name": c, "value": round(v, 2)})
 
     # 中国云关键指标
     cn_capex_2025_cny = round(sum(r["capex_billion_cny"] for r in china_capex if r["calendar_year"] == 2025), 1)
     cn_capex_2025_usd = round(sum(r["capex_billion_usd"] or 0 for r in china_capex if r["calendar_year"] == 2025), 1)
+    cn_capex_q1_usd = round(sum(r["capex_billion_usd"] or 0 for r in china_capex
+                                if r["calendar_year"] == 2026 and r["calendar_quarter"] == 1), 1)
     cn_capex_q1_cny = round(sum(r["capex_billion_cny"] for r in china_capex
                                 if r["calendar_year"] == 2026 and r["calendar_quarter"] == 1), 1)
-    cn_capex_q1_prev = round(sum(r["capex_billion_cny"] for r in china_capex
+    cn_capex_q1_prev_usd = round(sum(r["capex_billion_usd"] or 0 for r in china_capex
                                   if r["calendar_year"] == 2025 and r["calendar_quarter"] == 1), 1) or 1
-    cn_capex_q1_yoy = round((cn_capex_q1_cny - cn_capex_q1_prev) / cn_capex_q1_prev * 100, 1)
-    bytedance_q1 = round(sum(r["capex_billion_cny"] for r in china_capex
+    cn_capex_q1_yoy = round((cn_capex_q1_usd - cn_capex_q1_prev_usd) / cn_capex_q1_prev_usd * 100, 1)
+    bytedance_q1_usd = round(sum(r["capex_billion_usd"] or 0 for r in china_capex
                               if r["company"] == "ByteDance"
-                              and r["calendar_year"] == 2026 and r["calendar_quarter"] == 1), 1)
+                              and r["calendar_year"] == 2026 and r["calendar_quarter"] == 1), 2)
     cn_vs_us_ratio = round((cn_capex_2025_usd / max(capex_2025, 1)) * 100, 1)
 
     # ---------- TSMC 数据加工 ----------
@@ -1076,13 +1096,13 @@ def main():
         "asset_series": asset_series,
         "mom_names": mom_names,
         "mom_values": mom_values,
-        # 中国云
+        # 中国云 (USD)
         "cn_quarters": cn_quarters,
-        "cn_series": cn_series,
+        "cn_series_usd": cn_series_usd,
         "cn_us_years": [str(y) for y in years_cmp],
         "us_annual_usd": us_annual_usd,
-        "cn_annual_usd": cn_annual_usd,
-        "cn_2025_pie": cn_2025_pie,
+        "cn_annual_usd_only": cn_annual_usd_only,
+        "cn_2025_pie_usd": cn_2025_pie_usd,
         # TSMC
         "tsmc_months": tsmc_months,
         "tsmc_revenue": tsmc_revenue,
@@ -1164,11 +1184,11 @@ def main():
         .replace("__CN_SHARE_PERIOD__", cn_share_period) \
         .replace("__OR_WEEKLY__", str(or_weekly)) \
         .replace("__OR_WEEKLY_PERIOD__", f"week of {cn_share_period}" if cn_share_period else "") \
-        .replace("__CN_CAPEX_2025__", str(cn_capex_2025_cny)) \
         .replace("__CN_CAPEX_2025_USD__", str(cn_capex_2025_usd)) \
-        .replace("__CN_CAPEX_Q1__", str(cn_capex_q1_cny)) \
+        .replace("__CN_CAPEX_2025__", str(cn_capex_2025_cny)) \
+        .replace("__CN_CAPEX_Q1_USD__", str(cn_capex_q1_usd)) \
         .replace("__CN_CAPEX_Q1_YOY__", f"+{cn_capex_q1_yoy}%" if cn_capex_q1_yoy > 0 else f"{cn_capex_q1_yoy}%") \
-        .replace("__BYTEDANCE_Q1__", f"¥{bytedance_q1}") \
+        .replace("__BYTEDANCE_Q1_USD__", str(bytedance_q1_usd)) \
         .replace("__CN_VS_US_RATIO__", str(cn_vs_us_ratio)) \
         .replace("__TSMC_LATEST__", str(tsmc_latest_usd)) \
         .replace("__TSMC_LATEST_PERIOD__", tsmc_latest_period) \
