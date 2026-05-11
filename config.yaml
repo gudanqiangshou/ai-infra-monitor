@@ -1,0 +1,157 @@
+# AI 基建投资监控系统配置
+project:
+  name: "AI Infra Monitor"
+  version: "1.0.0"
+  github_repo: "gudanqiangshou/ai-infra-monitor"
+  github_pages_url: "https://gudanqiangshou.github.io/ai-infra-monitor/"
+
+# 四大云厂商
+hyperscalers:
+  AMZN:
+    name: "Amazon"
+    cn_name: "亚马逊"
+    cloud_unit: "AWS"
+    ticker: "AMZN"
+    earnings_quarter_anchor: ["02", "05", "08", "11"]  # 财报月份
+  MSFT:
+    name: "Microsoft"
+    cn_name: "微软"
+    cloud_unit: "Azure"
+    ticker: "MSFT"
+    earnings_quarter_anchor: ["01", "04", "07", "10"]
+  GOOGL:
+    name: "Alphabet"
+    cn_name: "谷歌"
+    cloud_unit: "Google Cloud"
+    ticker: "GOOGL"
+    earnings_quarter_anchor: ["01", "04", "07", "10"]
+  META:
+    name: "Meta"
+    cn_name: "Meta"
+    cloud_unit: "FAIR/Reality Labs"
+    ticker: "META"
+    earnings_quarter_anchor: ["01", "04", "07", "10"]
+
+# 全球Top10模型/平台
+top_models:
+  - id: "gemini"
+    name: "Gemini"
+    cn_name: "Gemini全系"
+    provider: "Google"
+    country: "US"
+  - id: "gpt"
+    name: "GPT"
+    cn_name: "GPT全系"
+    provider: "OpenAI"
+    country: "US"
+  - id: "doubao"
+    name: "Doubao"
+    cn_name: "豆包全系"
+    provider: "ByteDance"
+    country: "CN"
+  - id: "claude"
+    name: "Claude"
+    cn_name: "Claude全系"
+    provider: "Anthropic"
+    country: "US"
+  - id: "qwen"
+    name: "Qwen"
+    cn_name: "通义千问全系"
+    provider: "Alibaba"
+    country: "CN"
+  - id: "deepseek"
+    name: "DeepSeek"
+    cn_name: "DeepSeek全系"
+    provider: "DeepSeek"
+    country: "CN"
+  - id: "minimax"
+    name: "MiniMax"
+    cn_name: "MiniMax全系"
+    provider: "MiniMax"
+    country: "CN"
+  - id: "kimi"
+    name: "Kimi"
+    cn_name: "Kimi全系"
+    provider: "Moonshot"
+    country: "CN"
+  - id: "glm"
+    name: "GLM"
+    cn_name: "GLM全系"
+    provider: "Zhipu"
+    country: "CN"
+  - id: "mimo"
+    name: "MiMo"
+    cn_name: "MiMo全系"
+    provider: "Xiaomi"
+    country: "CN"
+
+# 投资关联资产
+investment_assets:
+  # 核心受益
+  core:
+    - {ticker: "NVDA", name: "NVIDIA", cn: "英伟达", role: "GPU核心"}
+    - {ticker: "TSM", name: "TSMC", cn: "台积电", role: "AI芯片代工"}
+    - {ticker: "AVGO", name: "Broadcom", cn: "博通", role: "AI网络/ASIC"}
+  # 存储/HBM
+  memory:
+    - {ticker: "MU", name: "Micron", cn: "美光", role: "HBM存储"}
+    - {ticker: "000660.KS", name: "SK Hynix", cn: "SK海力士", role: "HBM龙头"}
+  # 设备
+  equipment:
+    - {ticker: "ASML", name: "ASML", cn: "阿斯麦", role: "EUV光刻"}
+    - {ticker: "AMAT", name: "Applied Materials", cn: "应用材料", role: "刻蚀沉积"}
+  # 数据中心电力/冷却
+  power:
+    - {ticker: "VRT", name: "Vertiv", cn: "维谛", role: "数据中心冷却电力"}
+    - {ticker: "CEG", name: "Constellation Energy", cn: "星座能源", role: "核电AI概念"}
+    - {ticker: "VST", name: "Vistra", cn: "维斯特拉", role: "核电AI概念"}
+  # 网络
+  network:
+    - {ticker: "ANET", name: "Arista Networks", cn: "Arista", role: "AI网络"}
+  # 中立云
+  neocloud:
+    - {ticker: "CRWV", name: "CoreWeave", cn: "CoreWeave", role: "AI算力中立云"}
+  # 中国AI算力
+  china:
+    - {ticker: "688256", name: "寒武纪", cn: "寒武纪", role: "AI芯片国产"}
+    - {ticker: "688041", name: "海光信息", cn: "海光信息", role: "AI芯片国产"}
+    - {ticker: "603019", name: "中科曙光", cn: "中科曙光", role: "服务器"}
+    - {ticker: "000977", name: "浪潮信息", cn: "浪潮信息", role: "服务器龙头"}
+
+# 数据源
+data_sources:
+  capex_news:
+    - "cnbc.com"
+    - "bloomberg.com"
+    - "reuters.com"
+    - "wsj.com"
+    - "ft.com"
+    - "datacenterdynamics.com"
+    - "fortune.com"
+    - "tomshardware.com"
+  token_news:
+    - "openrouter.ai"
+    - "36kr.com"
+    - "qbitai.com"
+    - "wallstreetcn.com"
+    - "a16z.com"
+    - "techcrunch.com"
+
+# 事件重要性阈值
+event_severity:
+  critical: 5    # 财报发布、Capex指引变更、新模型发布、单日股价>5%
+  high: 4        # 数据中心新建公告、Token突破新高、收购并购
+  medium: 3      # 行业分析、CEO访谈、技术发布
+  low: 2         # 一般行业动态
+  info: 1        # 背景资料
+
+# 通知规则
+notification:
+  min_severity_to_push: 3   # 只推送 medium 及以上
+  weekly_summary_day: 0     # 周日发送周度汇总（0=周一, 6=周日）
+  monthly_deep_report: 1    # 每月1日发深度报告
+
+# 飞书 Webhook
+feishu:
+  webhook: "${FEISHU_WEBHOOK}"   # 从环境变量读取
+  keyword: "AI基建"

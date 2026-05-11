@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>AI基建投资监控 Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+<style>
+* { box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+       margin: 0; padding: 0; background: #f5f6fa; color: #2c3e50; }
+.header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;
+          padding: 24px 32px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+.header h1 { margin: 0 0 8px 0; font-size: 24px; font-weight: 600; }
+.header .meta { font-size: 13px; opacity: 0.9; }
+.tabs { display: flex; background: white; border-bottom: 1px solid #e5e8eb;
+        padding: 0 32px; position: sticky; top: 0; z-index: 10; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+.tab { padding: 16px 24px; cursor: pointer; font-size: 14px; font-weight: 500;
+       color: #64748b; border-bottom: 3px solid transparent; transition: all 0.2s; }
+.tab.active { color: #667eea; border-bottom-color: #667eea; }
+.tab:hover { color: #667eea; background: #f8fafc; }
+.content { padding: 24px 32px; }
+.tab-pane { display: none; }
+.tab-pane.active { display: block; }
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+.grid-1 { display: grid; grid-template-columns: 1fr; gap: 20px; margin-bottom: 20px; }
+.card { background: white; border-radius: 12px; padding: 20px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+.card h3 { margin: 0 0 12px 0; font-size: 15px; font-weight: 600; color: #1e293b; }
+.card .subtitle { font-size: 12px; color: #64748b; margin-bottom: 16px; }
+.chart { width: 100%; height: 360px; }
+.chart-tall { height: 440px; }
+.event-list { list-style: none; padding: 0; margin: 0; }
+.event-item { padding: 14px 0; border-bottom: 1px solid #f1f5f9; display: flex; gap: 12px; }
+.event-item:last-child { border-bottom: none; }
+.event-badge { padding: 2px 8px; border-radius: 4px; font-size: 11px;
+               font-weight: 600; height: fit-content; white-space: nowrap; }
+.badge-capex { background: #fef3c7; color: #92400e; }
+.badge-token { background: #ddd6fe; color: #5b21b6; }
+.badge-investment { background: #d1fae5; color: #065f46; }
+.event-content { flex: 1; }
+.event-title { font-size: 14px; font-weight: 500; color: #1e293b; margin-bottom: 4px; line-height: 1.4; }
+.event-title a { color: #1e293b; text-decoration: none; }
+.event-title a:hover { color: #667eea; }
+.event-meta { font-size: 12px; color: #64748b; }
+.severity-stars { color: #f59e0b; font-size: 11px; margin-left: 4px; }
+.stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 20px; }
+.stat-card { background: white; padding: 16px; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+.stat-value { font-size: 22px; font-weight: 700; color: #1e293b; }
+.stat-label { font-size: 12px; color: #64748b; margin-top: 4px; }
+.stat-delta { font-size: 12px; color: #10b981; margin-top: 2px; }
+.stat-delta.down { color: #ef4444; }
+@media (max-width: 900px) {
+  .grid { grid-template-columns: 1fr; }
+  .stat-grid { grid-template-columns: repeat(2, 1fr); }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>📊 AI基建投资监控 Dashboard</h1>
+  <div class="meta">数据更新：2026-05-11 16:43 · 数据点：68条Capex · 51条Token · 30条模型 · 310条价格 · 46条事件</div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="showTab('capex')">💰 Capex Dashboard</div>
+  <div class="tab" onclick="showTab('token')">🚀 Token Dashboard</div>
+  <div class="tab" onclick="showTab('invest')">📈 投资关联</div>
+  <div class="tab" onclick="showTab('events')">📰 今日要闻</div>
+</div>
+
+<div class="content">
+
+<!-- ==================== Tab 1: Capex ==================== -->
+<div id="tab-capex" class="tab-pane active">
+
+  <div class="stat-grid">
+    <div class="stat-card">
+      <div class="stat-value">$695B</div>
+      <div class="stat-label">2026全年指引合计</div>
+      <div class="stat-delta">YoY +107%</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">$130.5B</div>
+      <div class="stat-label">2026 Q1 单季合计</div>
+      <div class="stat-delta">YoY +92%</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">$338B</div>
+      <div class="stat-label">2025全年合计</div>
+      <div class="stat-delta">YoY +34%</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">~75%</div>
+      <div class="stat-label">用于AI基础设施</div>
+      <div class="stat-delta">数据中心+GPU</div>
+    </div>
+  </div>
+
+  <div class="grid-1">
+    <div class="card">
+      <h3>季度Capex趋势 (2022 Q1 - 2026 Q1)</h3>
+      <div class="subtitle">单位：亿美元 | 数据来源：各公司10-Q/10-K财报</div>
+      <div id="chart-quarterly" class="chart chart-tall"></div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h3>年度Capex堆叠对比</h3>
+      <div class="subtitle">含2026年最新指引</div>
+      <div id="chart-annual" class="chart"></div>
+    </div>
+    <div class="card">
+      <h3>2026 Q1 单季占比</h3>
+      <div class="subtitle">四大云厂商Capex份额</div>
+      <div id="chart-q1-pie" class="chart"></div>
+    </div>
+  </div>
+
+  <div class="grid-1">
+    <div class="card">
+      <h3>2026年Capex指引修订时间线</h3>
+      <div class="subtitle">每次财报会议的指引变更</div>
+      <div id="chart-guidance" class="chart"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== Tab 2: Token ==================== -->
+<div id="tab-token" class="tab-pane">
+
+  <div class="stat-grid">
+    <div class="stat-card">
+      <div class="stat-value">~250T</div>
+      <div class="stat-label">全球日均Token消耗</div>
+      <div class="stat-delta">2026年3月</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">120T</div>
+      <div class="stat-label">豆包日均</div>
+      <div class="stat-delta">全球第3</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">51.2%</div>
+      <div class="stat-label">中国模型OpenRouter份额</div>
+      <div class="stat-delta">2024年仅1.2%</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">20T+</div>
+      <div class="stat-label">OpenRouter周总量</div>
+      <div class="stat-delta">YoY +1100%</div>
+    </div>
+  </div>
+
+  <div class="grid-1">
+    <div class="card">
+      <h3>主流平台月度Token消耗趋势</h3>
+      <div class="subtitle">单位：万亿(T) | Gemini/GPT/豆包/通义/OpenRouter</div>
+      <div id="chart-platform" class="chart chart-tall"></div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h3>OpenRouter Top 10 模型 (最新周)</h3>
+      <div class="subtitle" id="top10-subtitle">数据周</div>
+      <div id="chart-top10" class="chart"></div>
+    </div>
+    <div class="card">
+      <h3>中美模型 OpenRouter 占比演变</h3>
+      <div class="subtitle">Top10内中国vs美国Token占比</div>
+      <div id="chart-cn-us" class="chart"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== Tab 3: 投资关联 ==================== -->
+<div id="tab-invest" class="tab-pane">
+
+  <div class="grid-1">
+    <div class="card">
+      <h3>核心受益股归一化走势 (24个月)</h3>
+      <div class="subtitle">起始点=100 | NVDA/TSM/AVGO/MU/ASML/VRT/CEG/VST/ANET</div>
+      <div id="chart-assets" class="chart chart-tall"></div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h3>近期股价表现 (% MoM)</h3>
+      <div class="subtitle">最近1月变动</div>
+      <div id="chart-mom" class="chart"></div>
+    </div>
+    <div class="card">
+      <h3>资产分类配置</h3>
+      <div class="subtitle">按AI产业链环节</div>
+      <div id="chart-asset-cat" class="chart"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== Tab 4: 今日要闻 ==================== -->
+<div id="tab-events" class="tab-pane">
+  <div class="card">
+    <h3>近期事件 (重要性 ≥ ⭐⭐⭐)</h3>
+    <div class="subtitle">按发现时间倒序 · 限50条</div>
+    <ul class="event-list" id="event-list">
+      
+          <li class="event-item">
+            <span class="event-badge badge-investment">投资</span>
+            <div class="event-content">
+              <div class="event-title">
+                <a href="https://cj.sina.cn/articles/view/5953740931/162dee083067035epe" target="_blank">国产AI芯片龙头，业绩开挂！寒武纪28亿、海光信息40亿、摩尔线程赚钱了！__财经头条__新浪财经</a>
+                <span class="severity-stars">⭐⭐⭐⭐⭐</span>
+              </div>
+              <div class="event-meta">cj.sina.cn · 2026-05-11</div>
+            </div>
+          </li>
+          <li class="event-item">
+            <span class="event-badge badge-investment">投资</span>
+            <div class="event-content">
+              <div class="event-title">
+                <a href="http://www.news.cn/info/20260305/705f21b3e0514b929708e498edc58d33/c.html" target="_blank">新动能 新开局｜全国人大代表杨剑宇：加快推动算力电力协同发展 夯实AI时代能源底座</a>
+                <span class="severity-stars">⭐⭐⭐⭐</span>
+              </div>
+              <div class="event-meta">news.cn · 2026-05-11</div>
+            </div>
+          </li>
+          <li class="event-item">
+            <span class="event-badge badge-investment">投资</span>
+            <div class="event-content">
+              <div class="event-title">
+                <a href="https://www.mofcom.gov.cn/zwjg/jmxw/xyfz/art/2026/art_c98a57fa546d46d794be760f485e4dde.html" target="_blank">AI算力需求激增，美科技巨头联手布局小型模块化核电</a>
+                <span class="severity-stars">⭐⭐⭐⭐</span>
+              </div>
+              <div class="event-meta">mofcom.gov.cn · 2026-05-11 · AMZN, GOOGL, META</div>
+            </div>
+          </li>
+          <li class="event-item">
+            <span class="event-badge badge-investment">投资</span>
+            <div class="event-content">
+              <div class="event-title">
+                <a href="https://x.com/TheValueist/status/2052534770987389269" target="_blank">$CRWV KEY READ-THROUGHS FROM COREWEAVE Q1 2026 ...</a>
+                <span class="severity-stars">⭐⭐⭐⭐⭐</span>
+              </div>
+              <div class="event-meta">x.com · 2026-05-11 · NVDA</div>
+            </div>
+          </li>
+          <li class="event-item">
+            <span class="event-badge badge-investment">投资</span>
+            <div class="event-content">
+              <div class="event-title">
+                <a href="https://investors.coreweave.com/news/news-details/2026/CoreWeave-Reports-Strong-First-Quarter-2026-Results/" target="_blank">CoreWeave Reports Strong First Quarter 2026 Results</a>
+                <span class="severity-stars">⭐⭐⭐</span>
+              </div>
+              <div class="event-meta">investors.coreweave.com · 2026-05-11</div>
+            </div>
+          </li>
+          <li class="event-item">
+            <span class="event-badge badge-investment">投资</span>
+            <div class="event-content">
+              <div class="event-title">
+                <a href="https://sherwood.news/markets/coreweave-q1-earnings-2026-ai-boom-neocloud/" target="_blank">CoreWeave sinks after offering weak Q2 sales guidance</a>
+                <span class="severity-stars">⭐⭐⭐⭐⭐</span>
+              </div>
+              <div class="event-meta">sherwood.news · 2026-05-11</div>
+            </div>
+          </li>
+          <li class="event-item">
+            <span class="event-badge badge-investment">投资</span>
+            <div class="event-content">
+              <div class="event-title">
+                <a href="https://www.youtube.com/watch" target="_blank">CoreWeave Q1 2026 Earnings: $2.1B Revenue & AI Cloud Growth ...</a>
+                <span class="severity-stars">⭐⭐⭐⭐⭐</span>
+              </div>
+              <div class="event-meta">youtube.com · 2026-05-11</div>
+            </div>
+          </li>
+          <li class="event-item">
+            <span class="event-badge badge-investment">投资</span>
+            <div class="event-content">
+              <div class="event-title">
+                <a href="https://www.cnbc.com/2026/05/07/coreweave-crwv-q1-earnings-report-2026.html" target="_blank">CoreWeave (CRWV) Q1 earnings report 2026 - CNBC</a>
+                <span class="severity-stars">⭐⭐⭐⭐⭐</span>
+              </div>
+              <div class="event-meta">cnbc.com · 2026-05-11</div>
+            </div>
+          </li>
+          <li class="event-item">
+            <span class="event-badge badge-investment">投资</span>
+            <div class="event-content">
+              <div class="event-title">
+                <a href="https://brief.bismarckanalysis.com/p/ai-2026-data-centers-restart-growth" target="_blank">AI 2026: Data Centers Restart Growth of a Stagnant U.S. Electrical Grid</a>
+                <span class="severity-stars">⭐⭐⭐⭐</span>
+              </div>
+              <div class="event-meta">brief.bismarckanalysis.com · 2026-05-11</div>
+            </div>
+          </li>
+          <li class="event-item">
+            <span class="event-badge badge-investment">投资</span>
+            <div class="event-content">
+              <div class="event-title">
+                <a href="https://pv-magazine-usa.com/2026/03/13/ai-datacenters-rewrite-the-solar-ppa-playbook/" target="_blank">AI datacenters rewrite the solar PPA playbook – pv magazine USA</a>
+                <span class="severity-stars">⭐⭐⭐⭐</span>
+              </div>
+              <div class="event-meta">pv-magazine-usa.com · 2026-05-11</div>
+            </div>
+          </li>
+          <li class="event-item">
+            <span class="event-badge badge-investment">投资</span>
+            <div class="event-content">
+              <div class="event-title">
+                <a href="https://enkiai.com/solar/alibaba-nuclear-power-fueling-ai-data-centers-in-2026" target="_blank">Alibaba Nuclear Power: Fueling AI Data Centers in 2026</a>
+                <span class="severity-stars">⭐⭐⭐⭐</span>
+              </div>
+              <div class="event-meta">enkiai.com · 2026-05-11 · ALIBABA</div>
+            </div>
+          </li>
+          <li class="event-item">
+            <span class="event-badge badge-investment">投资</span>
+            <div class="event-content">
+              <div class="event-title">
+                <a href="https://247wallst.com/investing/2026/05/04/how-ai-data-centers-are-reshaping-the-power-market-and-the-4-plays-investors-are-making/" target="_blank">How AI Data Centers Are Reshaping the Power Market (And the 4 Plays Investors Are Making) - 24/7 Wall St.</a>
+                <span class="severity-stars">⭐⭐⭐⭐</span>
+              </div>
+              <div class="event-meta">247wallst.com · 2026-05-11 · GOOGL</div>
+            </div>
+          </li>
+          <li class="event-item">
+            <span class="event-badge badge-investment">投资</span>
+            <div class="event-content">
+              <div class="event-title">
+                <a href="https://tech-insider.org/micron-q2-2026-earnings-ai-memory-market/" target="_blank">Micron Q2 2026: Record Revenue on AI Boom [Analysis]</a>
+                <span class="severity-stars">⭐⭐⭐⭐</span>
+              </div>
+              <div class="event-meta">tech-insider.org · 2026-05-11 · MU, HYNIX</div>
+            </div>
+          </li>
+          <li class="event-item">
+            <span class="event-badge badge-investment">投资</span>
+            <div class="event-content">
+              <div class="event-title">
+                <a href="https://www.bloomberg.com/news/articles/2026-05-08/tsmc-sales-grow-17-5-on-extended-ai-buildout-boom" target="_blank">TSMC Sales Grow 17.5% on Extended AI Buildout Boom - Bloomberg</a>
+                <span class="severity-stars">⭐⭐⭐</span>
+              </div>
+              <div class="event-meta">bloomberg.com · 2026-05-11 · TSM</div>
+            </div>
+          </li>
+          <li class="event-item">
+            <span class="event-badge badge-investment">投资</span>
+            <div class="event-content">
+              <div class="event-title">
+                <a href="https://www.digitimes.com/news/a20260508VL206/tsmc-revenue-2026-nyse-growth.html" target="_blank">TSMC's 2026 revenue surges 30% in first four months on AI boom</a>
+                <span class="severity-stars">⭐⭐⭐</span>
+              </div>
+              <div class="event-meta">digitimes.com · 2026-05-11 · TSM</div>
+            </div>
+          </li>
+          <li class="event-item">
+            <span class="event-badge badge-investment">投资</span>
+            <div class="event-content">
+              <div class="event-title">
+                <a href="https://www.cnbc.com/2026/04/10/tsmc-q1-record-revenue-ai-chip-demand-strong.html" target="_blank">TSMC posts record revenue as AI chip demand stays strong</a>
+                <span class="severity-stars">⭐⭐⭐</span>
+              </div>
+              <div class="event-meta">cnbc.com · 2026-05-11 · TSM</div>
+            </div>
+          </li>
+          <li class="event-item">
+            <span class="event-badge badge-investment">投资</span>
+            <div class="event-content">
+              <div class="event-title">
+                <a href="https://investor.nvidia.com/financial-info/financial-reports/default.aspx" target="_blank">Financial Reports - NVIDIA Investor Relations</a>
+                <span class="severity-stars">⭐⭐⭐</span>
+              </div>
+              <div class="event-meta">investor.nvidia.com · 2026-05-11 · NVDA</div>
+            </div>
+          </li>
+          <li class="event-item">
+            <span class="event-badge badge-investment">投资</span>
+            <div class="event-content">
+              <div class="event-title">
+                <a href="https://www.forbes.com/sites/tylerroush/2026/02/25/nvidia-earnings-top-expectations-on-record-data-center-revenue/" target="_blank">Nvidia Earnings: Data Center Revenue Surge Helps AI Giant Top Expectations</a>
+                <span class="severity-stars">⭐⭐⭐⭐</span>
+              </div>
+              <div class="event-meta">forbes.com · 2026-05-11 · NVDA</div>
+            </div>
+          </li>
+          <li class="event-item">
+            <span class="event-badge badge-investment">投资</span>
+            <div class="event-content">
+              <div class="event-title">
+                <a href="https://finance.yahoo.com/news/data-center-unit-help-nvidia-130800874.html" target="_blank">Will Data Center Unit Help NVIDIA Reach Its $65B Q4 Revenue Goal?</a>
+                <span class="severity-stars">⭐⭐⭐⭐</span>
+              </div>
+              <div class="event-meta">finance.yahoo.com · 2026-05-11 · NVDA</div>
+            </div>
+          </li>
+          <li class="event-item">
+            <span class="event-badge badge-investment">投资</span>
+            <div class="event-content">
+              <div class="event-title">
+                <a href="https://futurumgroup.com/insights/nvidia-q3-fy-2026-record-data-center-revenue-higher-q4-guide/" target="_blank">NVIDIA Q3 FY 2026 Earnings: Record Data Center Revenue - Futurum</a>
+                <span class="severity-stars">⭐⭐⭐⭐</span>
+              </div>
+              <div class="event-meta">futurumgroup.com · 2026-05-11 · NVDA</div>
+            </div>
+          </li>
+          <li class="event-item">
+            <span class="event-badge badge-investment">投资</span>
+            <div class="event-content">
+              <div class="event-title">
+                <a href="https://www.spglobal.com/market-intelligence/en/news-insights/research/2026/02/nvidia-earnings-preview-q4-2026" target="_blank">Nvidia earnings preview: Q4 2026 | S&P Global</a>
+                <span class="severity-stars">⭐⭐⭐⭐</span>
+              </div>
+              <div class="event-meta">spglobal.com · 2026-05-11 · NVDA</div>
+            </div>
+          </li>
+          <li class="event-item">
+            <span class="event-badge badge-token">Token</span>
+            <div class="event-content">
+              <div class="event-title">
+                <a href="https://robonomics.substack.com/p/token-tracker-and-implications" target="_blank">Token Tracker & Implications - by FD - Robonomics</a>
+                <span class="severity-stars">⭐⭐⭐</span>
+              </div>
+              <div class="event-meta">robonomics.substack.com · 2026-05-11</div>
+            </div>
+          </li>
+          <li class="event-item">
+            <span class="event-badge badge-token">Token</span>
+            <div class="event-content">
+              <div class="event-title">
+                <a href="https://www.itiger.com/news/1183088688" target="_blank">Who is Consuming the 5 Trillion Token Model Compute Power? - Tiger Brokers</a>
+                <span class="severity-stars">⭐⭐⭐⭐⭐</span>
+              </div>
+              <div class="event-meta">itiger.com · 2026-05-11</div>
+            </div>
+          </li>
+          <li class="event-item">
+            <span class="event-badge badge-token">Token</span>
+            <div class="event-content">
+              <div class="event-title">
+                <a href="https://aizolo.com/blog/how-to-reduce-ai-api-costs-using-a-multi-model-ai-platform/" target="_blank">How to Reduce AI API Costs Using a Multi-Model AI Platform in 2026</a>
+                <span class="severity-stars">⭐⭐⭐</span>
+              </div>
+              <div class="event-meta">aizolo.com · 2026-05-11 · GOOGL, OPENAI, ANTHROPIC</div>
+            </div>
+          </li>
+          <li class="event-item">
+            <span class="event-badge badge-token">Token</span>
+            <div class="event-content">
+              <div class="event-title">
+                <a href="https://aionx.co/ai-comparisons/ai-pricing-comparison/" target="_blank">AI Pricing Comparison 2026: ChatGPT vs Claude vs Gemini ... - AIonX</a>
+                <span class="severity-stars">⭐⭐⭐</span>
+              </div>
+              <div class="event-meta">aionx.co · 2026-05-11 · GOOGL, OPENAI, ANTHROPIC</div>
+            </div>
+          </li>
+          <li class="event-item">
+            <span class="event-badge badge-token">Token</span>
+            <div class="event-content">
+              <div class="event-title">
+                <a href="https://mtz.china.com/touzi/2026/0408/226381.html" target="_blank">国诚投顾：Token调用量亮眼，关注新游上线进度 - 中华网</a>
+                <span class="severity-stars">⭐⭐⭐⭐⭐</span>
+              </div>
+              <div class="event-meta">mtz.china.com · 2026-05-11 · BYTEDANCE, ZHIPU</div>
+            </div>
+          </li>
+          <li class="event-item">
+            <span class="event-badge badge-token">Token</span>
+            <div class="event-content">
+              <div class="event-title">
+                <a href="https://news.cgtn.com/news/2026-03-23/China-s-AI-models-top-US-with-4-69-trillion-weekly-tokens-1LKFFIvDooo/p.html" target="_blank">China's AI models top US with 4.69 trillion weekly tokens - CGTN</a>
+                <span class="severity-stars">⭐⭐⭐⭐</span>
+              </div>
+              <div class="event-meta">news.cgtn.com · 2026-05-11</div>
+            </div>
+          </li>
+          <li class="event-item">
+            <span class="event-badge badge-capex">Capex</span>
+            <div class="event-content">
+              <div class="event-title">
+                <a href="https://www.toutiao.com/w/1856654364297545/" target="_blank">2026年开年，微软和Meta最新财报直接点燃AI算力战场：两家巨头四</a>
+                <span class="severity-stars">⭐⭐⭐⭐⭐</span>
+              </div>
+              <div class="event-meta">toutiao.com · 2026-05-11 · MSFT, META</div>
+            </div>
+          </li>
+          <li class="event-item">
+            <span class="event-badge badge-capex">Capex</span>
+            <div class="event-content">
+              <div class="event-title">
+                <a href="https://www.sohu.com/a/1016946936_122132398" target="_blank">美股讯号| 谷歌等四巨头2026年AI支出或超7000亿美元 - 搜狐</a>
+                <span class="severity-stars">⭐⭐⭐⭐⭐</span>
+              </div>
+              <div class="event-meta">sohu.com · 2026-05-11 · AMZN, MSFT, GOOGL, META</div>
+            </div>
+          </li>
+          <li class="event-item">
+            <span class="event-badge badge-capex">Capex</span>
+            <div class="event-content">
+              <div class="event-title">
+                <a href="https://bbx.com/zh-Hans/article/531428" target="_blank">2026年Q1微软、谷歌、亚马逊、Meta财报全解析</a>
+                <span class="severity-stars">⭐⭐⭐⭐⭐</span>
+              </div>
+              <div class="event-meta">bbx.com · 2026-05-11 · AMZN, MSFT, GOOGL, META</div>
+            </div>
+          </li>
+          <li class="event-item">
+            <span class="event-badge badge-capex">Capex</span>
+            <div class="event-content">
+              <div class="event-title">
+                <a href="https://futurumgroup.com/insights/ai-capex-2026-the-690b-infrastructure-sprint/" target="_blank">AI Capex 2026: The $690B Infrastructure Sprint - The Futurum Group</a>
+                <span class="severity-stars">⭐⭐⭐⭐⭐</span>
+              </div>
+              <div class="event-meta">futurumgroup.com · 2026-05-11 · AMZN, MSFT, GOOGL, META</div>
+            </div>
+          </li>
+          <li class="event-item">
+            <span class="event-badge badge-capex">Capex</span>
+            <div class="event-content">
+              <div class="event-title">
+                <a href="https://datacenterrichness.substack.com/p/hyperscalers-plan-630-billion-in" target="_blank">Hyperscalers Plan $630 Billion in 2026 CapEx - Data Center Richness</a>
+                <span class="severity-stars">⭐⭐⭐⭐</span>
+              </div>
+              <div class="event-meta">datacenterrichness.substack.com · 2026-05-11 · AMZN, MSFT, GOOGL, META</div>
+            </div>
+          </li>
+          <li class="event-item">
+            <span class="event-badge badge-capex">Capex</span>
+            <div class="event-content">
+              <div class="event-title">
+                <a href="https://asia.nikkei.com/business/technology/artificial-intelligence/meta-raises-2026-capex-to-145-billion-amid-ai-spending-boost" target="_blank">Meta raises 2026 capex to $145 billion amid AI spending boost - Nikkei Asia</a>
+                <span class="severity-stars">⭐⭐⭐⭐⭐</span>
+              </div>
+              <div class="event-meta">asia.nikkei.com · 2026-05-11 · META</div>
+            </div>
+          </li>
+          <li class="event-item">
+            <span class="event-badge badge-capex">Capex</span>
+            <div class="event-content">
+              <div class="event-title">
+                <a href="https://www.investing.com/analysis/meta-platforms-from-heavy-ai-capex-to-2026-roi-200673593" target="_blank">Meta Platforms: From Heavy AI CapEx to 2026 ROI? - Investing.com</a>
+                <span class="severity-stars">⭐⭐⭐</span>
+              </div>
+              <div class="event-meta">investing.com · 2026-05-11 · META</div>
+            </div>
+          </li>
+          <li class="event-item">
+            <span class="event-badge badge-capex">Capex</span>
+            <div class="event-content">
+              <div class="event-title">
+                <a href="https://www.nytimes.com/2026/01/28/technology/meta-earnings-ai-spending.html" target="_blank">Meta Forecasts Spending of at Least $115 Billion This Year</a>
+                <span class="severity-stars">⭐⭐⭐</span>
+              </div>
+              <div class="event-meta">nytimes.com · 2026-05-11 · META</div>
+            </div>
+          </li>
+          <li class="event-item">
+            <span class="event-badge badge-capex">Capex</span>
+            <div class="event-content">
+              <div class="event-title">
+                <a href="https://fortune.com/2026/04/29/meta-zuckerberg-145-billion-ai-spending-roi/" target="_blank">Meta just bumped its 2026 capex forecast up to as much as $145 ...</a>
+                <span class="severity-stars">⭐⭐⭐⭐⭐</span>
+              </div>
+              <div class="event-meta">fortune.com · 2026-05-11 · META</div>
+            </div>
+          </li>
+          <li class="event-item">
+            <span class="event-badge badge-capex">Capex</span>
+            <div class="event-content">
+              <div class="event-title">
+                <a href="https://finance.biggo.com/news/WgEk3J0BrX5PFN7Bsl3l" target="_blank">Meta Boosts 2026 AI Capex to $145 Billion, Stock Plunges 7 ...</a>
+                <span class="severity-stars">⭐⭐⭐⭐⭐</span>
+              </div>
+              <div class="event-meta">finance.biggo.com · 2026-05-11 · META</div>
+            </div>
+          </li>
+          <li class="event-item">
+            <span class="event-badge badge-capex">Capex</span>
+            <div class="event-content">
+              <div class="event-title">
+                <a href="https://www.datacenterdynamics.com/en/news/google-secures-nearly-32bn-in-debt-following-major-data-center-capex-commitment/" target="_blank">Google secures nearly $32bn in debt following major data center ...</a>
+                <span class="severity-stars">⭐⭐⭐⭐</span>
+              </div>
+              <div class="event-meta">datacenterdynamics.com · 2026-05-11 · GOOGL</div>
+            </div>
+          </li>
+          <li class="event-item">
+            <span class="event-badge badge-capex">Capex</span>
+            <div class="event-content">
+              <div class="event-title">
+                <a href="https://www.constellationr.com/insights/news/alphabet-plots-massive-capex-increase-2026" target="_blank">Alphabet plots massive CapEx increase for 2026</a>
+                <span class="severity-stars">⭐⭐⭐</span>
+              </div>
+              <div class="event-meta">constellationr.com · 2026-05-11 · GOOGL</div>
+            </div>
+          </li>
+          <li class="event-item">
+            <span class="event-badge badge-capex">Capex</span>
+            <div class="event-content">
+              <div class="event-title">
+                <a href="https://www.futuriom.com/articles/news/can-google-keep-its-balance-with-gigantic-capex/2026/02" target="_blank">Can Google Keep Its Balance with Gigantic Capex? - Futuriom</a>
+                <span class="severity-stars">⭐⭐⭐</span>
+              </div>
+              <div class="event-meta">futuriom.com · 2026-05-11 · GOOGL</div>
+            </div>
+          </li>
+          <li class="event-item">
+            <span class="event-badge badge-capex">Capex</span>
+            <div class="event-content">
+              <div class="event-title">
+                <a href="https://www.globaldatacenterhub.com/p/microsoft-q3-fy2026-the-190b-capex" target="_blank">Microsoft Q3 FY2026: The $190B Capex Plan That Repriced AI</a>
+                <span class="severity-stars">⭐⭐⭐⭐</span>
+              </div>
+              <div class="event-meta">globaldatacenterhub.com · 2026-05-11 · AMZN, MSFT</div>
+            </div>
+          </li>
+          <li class="event-item">
+            <span class="event-badge badge-capex">Capex</span>
+            <div class="event-content">
+              <div class="event-title">
+                <a href="https://techstrong.ai/articles/big-techs-unprecedented-725-billion-bet-on-ai-infrastructure-in-2026/" target="_blank">Big Tech's Unprecedented $725 Billion Bet on ...</a>
+                <span class="severity-stars">⭐⭐⭐⭐⭐</span>
+              </div>
+              <div class="event-meta">techstrong.ai · 2026-05-11 · AMZN, MSFT, GOOGL, META</div>
+            </div>
+          </li>
+          <li class="event-item">
+            <span class="event-badge badge-capex">Capex</span>
+            <div class="event-content">
+              <div class="event-title">
+                <a href="https://windowsforum.com/threads/microsoft-azure-drives-growth-but-investors-question-ai-capex-costs.416831/" target="_blank">Microsoft Azure Drives Growth—But Investors Question AI Capex Costs | Windows Forum</a>
+                <span class="severity-stars">⭐⭐⭐</span>
+              </div>
+              <div class="event-meta">windowsforum.com · 2026-05-11 · MSFT</div>
+            </div>
+          </li>
+          <li class="event-item">
+            <span class="event-badge badge-capex">Capex</span>
+            <div class="event-content">
+              <div class="event-title">
+                <a href="https://futurumgroup.com/insights/ai-capex-2026-the-690b-infrastructure-sprint/" target="_blank">AI Capex 2026: The $690B Infrastructure Sprint - Futurum</a>
+                <span class="severity-stars">⭐⭐⭐⭐⭐</span>
+              </div>
+              <div class="event-meta">futurumgroup.com · 2026-05-11 · AMZN, MSFT, GOOGL, META</div>
+            </div>
+          </li>
+          <li class="event-item">
+            <span class="event-badge badge-capex">Capex</span>
+            <div class="event-content">
+              <div class="event-title">
+                <a href="https://letsdatascience.com/news/amazon-increases-capex-to-442b-in-q1-accelerating-ai-buildou-45ccd319" target="_blank">Amazon increases CAPEX to $44.2B in Q1, accelerating AI buildout | Let's Data Science</a>
+                <span class="severity-stars">⭐⭐⭐⭐⭐</span>
+              </div>
+              <div class="event-meta">letsdatascience.com · 2026-05-11 · AMZN</div>
+            </div>
+          </li>
+          <li class="event-item">
+            <span class="event-badge badge-capex">Capex</span>
+            <div class="event-content">
+              <div class="event-title">
+                <a href="https://techjacksolutions.com/ai-brief/amazon-outspent-alphabet-and-microsoft-by-billions-in-q1-202/" target="_blank">Amazon Capex: Q1 2026 Spending Analysis</a>
+                <span class="severity-stars">⭐⭐⭐⭐⭐</span>
+              </div>
+              <div class="event-meta">techjacksolutions.com · 2026-05-11 · AMZN, MSFT, GOOGL</div>
+            </div>
+          </li>
+    </ul>
+  </div>
+</div>
+
+</div>
+
+<script>
+// Tab switching
+function showTab(name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-pane').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('tab-' + name).classList.add('active');
+  setTimeout(() => window.dispatchEvent(new Event('resize')), 50);
+}
+
+const DATA = {"capex_quarters": ["2022 Q1", "2022 Q2", "2022 Q3", "2022 Q4", "2023 Q1", "2023 Q2", "2023 Q3", "2023 Q4", "2024 Q1", "2024 Q2", "2024 Q3", "2024 Q4", "2025 Q1", "2025 Q2", "2025 Q3", "2025 Q4", "2026 Q1"], "capex_series": {"AMZN": [14.3, 15.3, 16.1, 14.7, 14.0, 11.5, 12.5, 14.6, 14.9, 17.6, 22.6, 27.8, 24.3, 31.4, 34.2, 38.4, 44.0], "MSFT": [6.6, 6.3, 6.6, 7.4, 7.8, 8.9, 11.2, 11.5, 14.0, 13.9, 20.0, 22.6, 16.7, 24.2, 19.6, 19.4, 31.0], "GOOGL": [9.8, 6.8, 7.3, 7.6, 6.3, 6.9, 8.1, 11.0, 12.0, 13.2, 13.1, 14.3, 17.2, 22.4, 24.0, 21.4, 35.7], "META": [5.5, 7.7, 9.5, 9.2, 7.1, 6.4, 6.8, 7.9, 6.7, 8.5, 9.2, 14.8, 13.7, 17.0, 19.4, 18.9, 19.8]}, "annual_years": [2022, 2023, 2024, 2025, 2026, "2026 (指引)"], "annual_actual": {"AMZN": [60.4, 52.6, 82.9, 128.3, 44.0, 200.0], "MSFT": [26.9, 39.4, 70.5, 79.9, 31.0, 190.0], "GOOGL": [31.5, 32.3, 52.6, 85.0, 35.7, 185.0], "META": [31.9, 28.2, 39.2, 69.0, 19.8, 135.0]}, "q1_2026_pie": [{"name": "Amazon", "value": 44.0}, {"name": "Alphabet", "value": 35.7}, {"name": "Meta", "value": 19.8}, {"name": "Microsoft", "value": 31.0}], "guidance_dates": ["2026-01-29", "2026-02-04", "2026-02-06", "2026-04-29"], "guidance_series": {"AMZN": [null, null, 200.0, 200.0], "MSFT": [152.0, 152.0, 152.0, 190.0], "GOOGL": [null, 180.0, 180.0, 185.0], "META": [125.0, 125.0, 125.0, 135.0]}, "token_months": ["2024-01", "2024-05", "2024-10", "2025-04", "2025-05", "2025-06", "2025-07", "2025-08", "2025-09", "2025-10", "2025-11", "2025-12", "2026-01", "2026-02", "2026-03", "2026-04"], "token_series": {"gemini": [null, 9.7, null, 480.0, 600.0, 800.0, 980.0, 1050.0, 1150.0, 1300.0, 1450.0, 1600.0, 1800.0, 2000.0, 2200.0, 2400.0], "gpt": [null, null, null, null, null, null, null, null, null, 258.0, 320.0, 400.0, 480.0, 540.0, 648.0, 720.0], "doubao": [null, 3.6, null, null, null, null, null, null, null, 1200.0, 1400.0, 1890.0, 2100.0, 2700.0, 3600.0, 3900.0], "qwen": [null, null, null, null, null, 60.0, null, null, null, null, null, 150.0, 180.0, 240.0, 300.0, 450.0], "openrouter": [null, null, 0.04, 20.0, null, null, null, null, null, null, null, 12.0, 25.0, 56.0, 65.0, 80.0]}, "top10_week": "2026-04-13", "top10_names": ["MiMo-V2-Pro", "Claude Sonnet 4.6", "MiniMax M2.7", "DeepSeek V3.2", "Qwen 3.6 Plus", "Claude Opus 4.6", "GPT-5.4", "Gemini 3.1 Pro", "Kimi K2", "Gemini 3.1 Flash Lite"], "top10_data": [4.65, 2.18, 1.92, 1.22, 1.1, 1.01, 0.98, 0.87, 0.74, 0.68], "top10_colors": ["#EF4444", "#3B82F6", "#EF4444", "#EF4444", "#EF4444", "#3B82F6", "#3B82F6", "#3B82F6", "#EF4444", "#3B82F6"], "cnus_weeks": ["2026-02-09", "2026-03-16", "2026-04-13"], "cnus_cn": [72.3, 63.2, 62.7], "cnus_us": [27.7, 36.8, 37.3], "asset_dates": ["2024-06", "2024-07", "2024-08", "2024-09", "2024-10", "2024-11", "2024-12", "2025-01", "2025-02", "2025-03", "2025-04", "2025-05", "2025-06", "2025-07", "2025-08", "2025-09", "2025-10", "2025-11", "2025-12", "2026-01", "2026-02", "2026-03", "2026-04", "2026-05"], "asset_series": {"AMAT": [100.0, 89.9, 83.6, 85.6, 76.9, 74.0, 68.9, 76.4, 67.0, 61.5, 63.9, 66.4, 77.6, 76.3, 68.1, 86.8, 98.8, 106.9, 108.9, 136.6, 157.8, 144.8, 167.2, 184.5], "ANET": [100.0, 98.9, 100.8, 109.5, 110.3, 115.8, 126.1, 131.5, 106.2, 88.4, 93.9, 98.9, 116.8, 140.6, 155.8, 166.3, 180.0, 149.1, 149.5, 161.8, 152.4, 140.1, 197.1, 161.8], "ASML": [100.0, 91.6, 88.4, 81.5, 65.8, 67.1, 67.8, 72.3, 69.3, 64.8, 65.3, 72.0, 78.4, 67.9, 72.6, 94.7, 103.6, 103.6, 104.6, 139.1, 141.8, 129.1, 140.7, 155.7], "AVGO": [100.0, 100.1, 101.4, 107.4, 105.7, 101.0, 144.4, 137.8, 124.2, 104.3, 119.9, 150.8, 171.7, 182.9, 185.2, 205.5, 230.2, 251.0, 215.6, 206.4, 199.0, 192.8, 260.0, 267.8], "CEG": [100.0, 94.8, 98.2, 129.8, 131.3, 128.1, 111.7, 149.8, 125.1, 100.7, 111.6, 152.9, 161.2, 173.7, 153.8, 164.3, 188.2, 181.9, 176.4, 140.2, 164.7, 139.4, 156.3, 151.6], "CRWV": [null, null, null, null, null, null, null, null, null, 100.0, 111.4, 300.2, 439.8, 307.8, 277.9, 369.1, 360.6, 197.2, 193.1, 251.3, 214.6, 208.9, 301.0, 307.8], "MU": [100.0, 83.5, 73.2, 78.8, 75.8, 74.5, 64.0, 69.4, 71.2, 66.1, 58.5, 71.8, 93.7, 83.0, 90.5, 127.2, 170.1, 179.8, 217.0, 315.4, 313.5, 256.9, 393.2, 567.8], "NVDA": [100.0, 94.7, 96.6, 98.3, 107.5, 111.9, 108.7, 97.2, 101.1, 87.7, 88.2, 109.4, 127.9, 144.0, 141.0, 151.0, 163.9, 143.3, 151.0, 154.7, 143.4, 141.2, 161.5, 174.2], "TSM": [100.0, 95.4, 98.8, 99.9, 109.6, 106.2, 113.6, 120.4, 103.9, 95.5, 95.9, 111.2, 130.3, 139.0, 132.8, 160.7, 172.8, 167.7, 174.8, 190.2, 215.5, 194.4, 227.9, 236.9], "VRT": [100.0, 90.9, 95.9, 114.9, 126.2, 147.4, 131.2, 135.2, 109.9, 83.4, 98.6, 124.7, 148.3, 168.2, 147.3, 174.3, 222.8, 207.6, 187.1, 215.1, 294.4, 289.5, 379.5, 392.7], "VST": [100.0, 92.1, 99.4, 137.9, 145.3, 185.9, 160.4, 195.4, 155.5, 136.6, 150.8, 186.8, 225.4, 242.5, 219.9, 227.9, 219.0, 208.0, 187.6, 184.2, 202.2, 174.8, 183.6, 171.8]}, "mom_names": ["AMAT", "ANET", "ASML", "AVGO", "CEG", "CRWV", "MU", "NVDA", "TSM", "VRT", "VST"], "mom_values": [10.3, -17.9, 10.7, 3.0, -3.0, 2.3, 44.4, 7.9, 3.9, 3.5, -6.4]};
+
+// ============== Chart 1: 季度Capex趋势 ==============
+const chart1 = echarts.init(document.getElementById('chart-quarterly'));
+chart1.setOption({
+  tooltip: { trigger: 'axis', formatter: function(params) {
+    let s = params[0].axisValue + '<br/>';
+    params.forEach(p => {
+      if (p.value != null) s += `<span style="display:inline-block;width:8px;height:8px;background:${p.color};border-radius:50%;margin-right:6px"></span>${p.seriesName}: $${p.value}B<br/>`;
+    });
+    return s;
+  }},
+  legend: { top: 0, data: ['Amazon', 'Microsoft', 'Alphabet', 'Meta'] },
+  grid: { left: 50, right: 30, bottom: 50, top: 40 },
+  xAxis: { type: 'category', data: DATA.capex_quarters,
+           axisLabel: { rotate: 45, fontSize: 11 } },
+  yAxis: { type: 'value', name: '亿美元', nameTextStyle: { fontSize: 11 } },
+  series: [
+    { name: 'Amazon', type: 'line', smooth: true, data: DATA.capex_series.AMZN,
+      itemStyle: { color: '#FF9900' }, lineStyle: { width: 2 } },
+    { name: 'Microsoft', type: 'line', smooth: true, data: DATA.capex_series.MSFT,
+      itemStyle: { color: '#00A4EF' }, lineStyle: { width: 2 } },
+    { name: 'Alphabet', type: 'line', smooth: true, data: DATA.capex_series.GOOGL,
+      itemStyle: { color: '#4285F4' }, lineStyle: { width: 2 } },
+    { name: 'Meta', type: 'line', smooth: true, data: DATA.capex_series.META,
+      itemStyle: { color: '#0866FF' }, lineStyle: { width: 2 } },
+  ]
+});
+
+// ============== Chart 2: 年度堆叠 ==============
+const chart2 = echarts.init(document.getElementById('chart-annual'));
+chart2.setOption({
+  tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+  legend: { top: 0 },
+  grid: { left: 50, right: 20, bottom: 30, top: 40 },
+  xAxis: { type: 'category', data: DATA.annual_years },
+  yAxis: { type: 'value', name: '亿美元' },
+  series: ['AMZN', 'MSFT', 'GOOGL', 'META'].map(c => ({
+    name: ({AMZN: 'Amazon', MSFT: 'Microsoft', GOOGL: 'Alphabet', META: 'Meta'})[c],
+    type: 'bar', stack: 'total', data: DATA.annual_actual[c],
+    itemStyle: { color: ({AMZN: '#FF9900', MSFT: '#00A4EF', GOOGL: '#4285F4', META: '#0866FF'})[c] }
+  }))
+});
+
+// ============== Chart 3: Q1 2026 饼图 ==============
+const chart3 = echarts.init(document.getElementById('chart-q1-pie'));
+chart3.setOption({
+  tooltip: { trigger: 'item', formatter: '{b}: ${c}B ({d}%)' },
+  legend: { bottom: 0 },
+  series: [{
+    type: 'pie', radius: ['40%', '70%'],
+    data: DATA.q1_2026_pie,
+    label: { formatter: '{b}\n${c}B' }
+  }]
+});
+
+// ============== Chart 4: 指引时间线 ==============
+const chart4 = echarts.init(document.getElementById('chart-guidance'));
+chart4.setOption({
+  tooltip: { trigger: 'axis' },
+  legend: { top: 0 },
+  grid: { left: 50, right: 30, bottom: 30, top: 40 },
+  xAxis: { type: 'category', data: DATA.guidance_dates },
+  yAxis: { type: 'value', name: '亿美元' },
+  series: ['AMZN', 'MSFT', 'GOOGL', 'META'].map(c => ({
+    name: ({AMZN: 'Amazon', MSFT: 'Microsoft', GOOGL: 'Alphabet', META: 'Meta'})[c],
+    type: 'line', step: 'end',
+    data: DATA.guidance_series[c],
+    itemStyle: { color: ({AMZN: '#FF9900', MSFT: '#00A4EF', GOOGL: '#4285F4', META: '#0866FF'})[c] },
+    lineStyle: { width: 2 },
+    symbol: 'circle', symbolSize: 8
+  }))
+});
+
+// ============== Chart 5: 平台月度Token ==============
+const chart5 = echarts.init(document.getElementById('chart-platform'));
+chart5.setOption({
+  tooltip: { trigger: 'axis', formatter: function(params) {
+    let s = params[0].axisValue + '<br/>';
+    params.forEach(p => { if (p.value != null) s += `<span style="display:inline-block;width:8px;height:8px;background:${p.color};border-radius:50%;margin-right:6px"></span>${p.seriesName}: ${p.value}T<br/>`; });
+    return s;
+  }},
+  legend: { top: 0, data: ['Gemini (Google)', 'GPT (OpenAI)', '豆包 (字节)', '通义千问 (阿里)', 'OpenRouter'] },
+  grid: { left: 60, right: 20, bottom: 50, top: 40 },
+  xAxis: { type: 'category', data: DATA.token_months, axisLabel: { rotate: 45, fontSize: 11 } },
+  yAxis: { type: 'value', name: '万亿T', nameTextStyle: { fontSize: 11 } },
+  series: [
+    { name: 'Gemini (Google)', type: 'line', smooth: true, data: DATA.token_series.gemini, itemStyle: { color: '#4285F4' } },
+    { name: 'GPT (OpenAI)', type: 'line', smooth: true, data: DATA.token_series.gpt, itemStyle: { color: '#10A37F' } },
+    { name: '豆包 (字节)', type: 'line', smooth: true, data: DATA.token_series.doubao, itemStyle: { color: '#FF6B6B' } },
+    { name: '通义千问 (阿里)', type: 'line', smooth: true, data: DATA.token_series.qwen, itemStyle: { color: '#FF8800' } },
+    { name: 'OpenRouter', type: 'line', smooth: true, data: DATA.token_series.openrouter, itemStyle: { color: '#9333EA' } },
+  ]
+});
+
+// ============== Chart 6: Top 10 模型 (横向条形) ==============
+const chart6 = echarts.init(document.getElementById('chart-top10'));
+chart6.setOption({
+  tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' },
+             formatter: '{b}<br/>{c}T tokens/周' },
+  grid: { left: 130, right: 30, bottom: 20, top: 10 },
+  xAxis: { type: 'value', name: 'T/周' },
+  yAxis: { type: 'category', data: DATA.top10_names.slice().reverse(), axisLabel: { fontSize: 11 } },
+  series: [{
+    type: 'bar',
+    data: DATA.top10_data.slice().reverse(),
+    itemStyle: {
+      color: function(p) { return DATA.top10_colors[DATA.top10_names.length - 1 - p.dataIndex]; }
+    },
+    label: { show: true, position: 'right', formatter: '{c}T' }
+  }]
+});
+document.getElementById('top10-subtitle').textContent = '数据周: ' + DATA.top10_week;
+
+// ============== Chart 7: 中美占比 ==============
+const chart7 = echarts.init(document.getElementById('chart-cn-us'));
+chart7.setOption({
+  tooltip: { trigger: 'axis' },
+  legend: { top: 0, data: ['中国模型', '美国模型'] },
+  grid: { left: 50, right: 30, bottom: 30, top: 40 },
+  xAxis: { type: 'category', data: DATA.cnus_weeks },
+  yAxis: { type: 'value', name: '%', max: 100 },
+  series: [
+    { name: '中国模型', type: 'line', stack: 'total', areaStyle: { color: '#EF4444' },
+      data: DATA.cnus_cn, itemStyle: { color: '#EF4444' } },
+    { name: '美国模型', type: 'line', stack: 'total', areaStyle: { color: '#3B82F6' },
+      data: DATA.cnus_us, itemStyle: { color: '#3B82F6' } }
+  ]
+});
+
+// ============== Chart 8: 资产价格 ==============
+const chart8 = echarts.init(document.getElementById('chart-assets'));
+const assetSeries = Object.entries(DATA.asset_series).map(([t, vals]) => ({
+  name: t, type: 'line', smooth: true, data: vals, symbol: 'none', lineStyle: { width: 1.5 }
+}));
+chart8.setOption({
+  tooltip: { trigger: 'axis' },
+  legend: { top: 0, type: 'scroll' },
+  grid: { left: 50, right: 30, bottom: 50, top: 40 },
+  xAxis: { type: 'category', data: DATA.asset_dates, axisLabel: { rotate: 45, fontSize: 11 } },
+  yAxis: { type: 'value', name: '指数(起=100)' },
+  series: assetSeries
+});
+
+// ============== Chart 9: MoM ==============
+const chart9 = echarts.init(document.getElementById('chart-mom'));
+chart9.setOption({
+  tooltip: { trigger: 'axis', formatter: '{b}: {c}%' },
+  grid: { left: 70, right: 30, bottom: 30, top: 10 },
+  xAxis: { type: 'value', name: '%', axisLine: { onZero: true } },
+  yAxis: { type: 'category', data: DATA.mom_names, axisLabel: { fontSize: 11 } },
+  series: [{
+    type: 'bar', data: DATA.mom_values,
+    itemStyle: { color: function(p) { return p.value >= 0 ? '#10b981' : '#ef4444'; } },
+    label: { show: true, position: 'right', formatter: '{c}%' }
+  }]
+});
+
+// ============== Chart 10: 资产类别 ==============
+const chart10 = echarts.init(document.getElementById('chart-asset-cat'));
+chart10.setOption({
+  tooltip: { trigger: 'item' },
+  legend: { bottom: 0, type: 'scroll' },
+  series: [{
+    type: 'pie', radius: '60%',
+    data: [
+      { value: 3, name: 'GPU/芯片核心 (NVDA/TSM/AVGO)' },
+      { value: 2, name: 'HBM存储 (MU/海力士)' },
+      { value: 2, name: '半导体设备 (ASML/AMAT)' },
+      { value: 3, name: '数据中心电力 (VRT/CEG/VST)' },
+      { value: 1, name: '网络 (ANET)' },
+      { value: 1, name: '中立云 (CRWV)' },
+      { value: 4, name: '中国AI算力 (寒武纪等)' },
+    ]
+  }]
+});
+
+// Responsive
+window.addEventListener('resize', () => {
+  [chart1, chart2, chart3, chart4, chart5, chart6, chart7, chart8, chart9, chart10].forEach(c => c.resize());
+});
+</script>
+
+</body>
+</html>
