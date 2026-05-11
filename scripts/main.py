@@ -175,18 +175,15 @@ def main():
     else:
         logging.info("⏭ skipping deploy")
 
-    # 6. 推送
+    # 6. 推送 (B方案: 仅 Top 10 含 ≥3 条 4星+ 才推; 周日强制周报)
     if not args.skip_notify:
         weekday = datetime.now().weekday()
-        # 周日（=6）或强制
         if weekday == 6 or args.force_weekly:
-            logging.info("📨 Step 5: weekly summary (Sunday)")
+            logging.info("📨 Sunday weekly summary (forced)")
             feishu_notifier.notify_weekly()
-        if new_events > 0:
-            logging.info(f"📨 Step 5b: event-driven push ({new_events} new)")
-            feishu_notifier.notify_if_events(min_severity=3)
-        elif weekday != 6:
-            logging.info("ℹ️ no new events, no weekly day, silent")
+        else:
+            logging.info("📨 smart push check (B-mode: ≥3 events with severity≥4)")
+            feishu_notifier.notify_if_events(min_severity=3, min_4star_count=3)
     else:
         logging.info("⏭ skipping notify")
 

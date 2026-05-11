@@ -286,17 +286,33 @@ def send_feishu(message: dict) -> bool:
         return False
 
 
-def notify_if_events(min_severity: int = 3):
-    """主入口：有事件就推送"""
+def notify_if_events(min_severity: int = 3, min_4star_count: int = 3):
+    """B方案智能推送：仅当 Top 10 含 ≥ N 条 4星+ 事件才推送
+
+    min_severity: 候选事件最低重要性（默认3）
+    min_4star_count: 触发推送的 4星+ 事件数量门槛（默认3）
+
+    平淡日（不达门槛）：静默累积到次日
+    """
     events = get_unpushed_events(min_severity=min_severity)
     if not events:
-        print("ℹ️ no new events to push")
+        print("ℹ️ no unpushed events — silent")
         return False
+
+    # B方案核心阈值
+    n_4star_plus = sum(1 for e in events if (e.get("severity") or 0) >= 4)
+    if n_4star_plus < min_4star_count:
+        n5 = sum(1 for e in events if (e.get("severity") or 0) >= 5)
+        print(f"ℹ️ today's Top 10 has only {n_4star_plus} ≥4★ events "
+              f"({n5} of which are 5★) — below threshold ({min_4star_count}), silent")
+        return False
+
     metrics = get_key_metrics()
     msg = build_event_message(events, metrics)
     ok = send_feishu(msg)
     if ok:
         mark_events_pushed([e["id"] for e in events])
+        print(f"   pushed {len(events)} events ({n_4star_plus} ≥4★)")
     return ok
 
 
