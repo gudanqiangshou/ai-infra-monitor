@@ -120,9 +120,30 @@ def update_event(event_id: int, translated_title: str, sev: int, impact: str,
     conn.close()
 
 
-def auto_sync_guidance(event_id: int, ed: dict, ev_source: str = ""):
-    """高置信度的 Capex 指引变更自动写入 capex_guidance；中等放入 pending 待审"""
+def auto_sync_guidance(event_id: int, ed: dict, ev_source: str = "",
+                        freshness: str = "uncertain",
+                        extracted_date: str = "",
+                        date_source: str = "unknown",
+                        published_at: str = ""):
+    """高置信度的 Capex 指引变更自动写入 capex_guidance；中等放入 pending 待审
+
+    Codex 门禁:
+    - 必须 freshness == 'recent'
+    - 必须有可信日期 (date_source != unknown 或 extracted_date 存在)
+    - announced_date 用 extracted_date / published_at，不用今天
+    """
     if not ed or ed.get("type") != "capex_guidance":
+        return None
+
+    # 门禁: 内容必须确认是近期的
+    if freshness != "recent":
+        # uncertain/older 一律不进主表，最多进 pending
+        ed = dict(ed)
+        ed["confidence"] = "low"  # 强制降级
+
+    # 门禁: 必须有可信日期来源
+    if date_source == "unknown" and not extracted_date:
+        # 完全没有可信日期，丢弃
         return None
     company = ed.get("company", "").upper()
     if company not in ("AMZN", "AMAZON", "MSFT", "MICROSOFT", "GOOGL", "GOOGLE", "ALPHABET", "META"):
@@ -142,7 +163,12 @@ def auto_sync_guidance(event_id: int, ed: dict, ev_source: str = ""):
     conn = get_conn()
     cur = conn.cursor()
     from datetime import datetime as _dt
+    # announced_date 优先用提取的真实日期，其次 published_at，最后才是今天（最不可靠）
     today = _dt.now().strftime("%Y-%m-%d")
+    announce_date = extracted_date or published_at or today
+    # 把 "YYYY-MM" 补成完整日期
+    if announce_date and len(announce_date) == 7:
+        announce_date = announce_date + "-15"
 
     if confidence == "high":
         # 健全性检查 1: 提取的数字应该是全年指引规模 (50B-300B 区间)
@@ -191,7 +217,7 @@ def auto_sync_guidance(event_id: int, ed: dict, ev_source: str = ""):
              guidance_point_billion, announced_date, source, notes)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         """, (company, year, new_low, new_high, midpoint,
-              today, f"AI-extracted from event #{event_id}", ev_source))
+              announce_date, f"AI-extracted from event #{event_id}", ev_source))
         conn.commit()
         conn.close()
         return "applied"
@@ -318,9 +344,24 @@ def classify_batch(events: list, client):
                     deleted += 1
                     continue
 
-                # 3. 提取到 Capex 指引变更 → 自动同步或入审核队列
+                # 3. 提取到 Capex 指引变更 → 走门禁
                 if ext_data:
-                    result = auto_sync_guidance(ev["id"], ext_data, ev.get("source_name", ""))
+                    # 取数据库里最新的 date_source（fetch_news已写入）
+                    conn_q = get_conn()
+                    cur_q = conn_q.cursor()
+                    cur_q.execute("SELECT date_source, published_at FROM news_events WHERE id=?", (ev["id"],))
+                    row = cur_q.fetchone()
+                    ds = row["date_source"] if row else "unknown"
+                    pub = row["published_at"] if row else ""
+                    conn_q.close()
+
+                    result = auto_sync_guidance(
+                        ev["id"], ext_data, ev.get("source_name", ""),
+                        freshness=freshness,
+                        extracted_date=r.get("extracted_date") or "",
+                        date_source=ds or "unknown",
+                        published_at=pub or "",
+                    )
                     if result == "applied":
                         synced += 1
                     elif result == "pending":

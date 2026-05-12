@@ -27,6 +27,7 @@ import fetch_news
 import render_html
 import feishu_notifier
 import classify_with_claude
+import cleanup_stale
 
 LOG_DIR = Path(__file__).parent.parent / "logs"
 LOG_DIR.mkdir(exist_ok=True)
@@ -153,6 +154,13 @@ def main():
             classify_with_claude.main(batch_size=8, max_batches=12)
         except Exception as e:
             logging.error(f"classify failed: {e}")
+
+    # 2.6 自动清理过时事件 (Codex 建议：清理是闭环的一部分)
+    logging.info("🗑 Step 1.6: cleaning up stale events...")
+    try:
+        cleanup_stale.cleanup(max_age_days=7)
+    except Exception as e:
+        logging.error(f"cleanup failed: {e}")
 
     # 3. 更新资产价格
     logging.info("💹 Step 2: updating asset prices...")

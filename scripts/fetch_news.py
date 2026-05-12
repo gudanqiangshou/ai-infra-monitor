@@ -259,28 +259,39 @@ def fetch_all_news(days: int = 3, max_per_query: int = 5, max_age_days: int = 7)
             if not title or not url:
                 continue
 
-            # 优先级：URL内日期 > Tavily published_date
+            # 优先级：URL内日期(最可信) > Tavily published_date(可能是索引日期)
             url_date = extract_date_from_url(url)
-            published = url_date or tavily_pub
+            published = ""
+            date_source = "unknown"
 
-            # 如果URL有日期且早于Tavily日期，说明Tavily报告的是索引日期，以URL为准
-            if url_date and tavily_pub:
-                try:
-                    url_d = datetime.fromisoformat(url_date)
-                    tav_d = datetime.fromisoformat(tavily_pub.split("T")[0])
-                    if url_d < tav_d:
-                        published = url_date  # 用URL内的真实日期
-                except Exception:
-                    pass
+            if url_date:
+                # URL 有日期 → 最可信
+                published = url_date
+                date_source = "url"
+                # 与 Tavily 日期比较，取早的（防Tavily用今天的索引日期覆盖）
+                if tavily_pub:
+                    try:
+                        url_d = datetime.fromisoformat(url_date)
+                        tav_d = datetime.fromisoformat(tavily_pub.split("T")[0])
+                        if url_d < tav_d:
+                            pass  # 已经用 url_date 了
+                    except Exception:
+                        pass
+            elif tavily_pub:
+                # 没URL日期，但有Tavily日期 - 不可信但保留
+                published = tavily_pub.split("T")[0] if "T" in tavily_pub else tavily_pub
+                date_source = "tavily"
+            else:
+                published = ""
+                date_source = "unknown"
 
             # 硬过滤：仅丢弃明确过时的（URL有日期且过老）
             if is_too_old(published, max_days=max_age_days):
                 stale_count += 1
                 continue
 
-            # 没日期的填今天（信任 Tavily days 过滤）
-            if not published:
-                published = datetime.now().strftime("%Y-%m-%d")
+            # 关键：不再用 datetime.now() 填空白！保持 NULL
+            # date_source='unknown' 的事件可以入库，但门禁会拦它们出现在飞书Top10
 
             h = event_hash(title, url)
             if is_duplicate(cur, h):
@@ -295,11 +306,11 @@ def fetch_all_news(days: int = 3, max_per_query: int = 5, max_age_days: int = 7)
             cur.execute("""
                 INSERT INTO news_events
                 (event_hash, category, title, summary, url, source_name,
-                 published_at, discovered_at, severity, entities)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                 published_at, discovered_at, severity, entities, date_source)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, (h, category, title, content, url, domain,
-                  published, datetime.now().isoformat(), sev,
-                  json.dumps(ents)))
+                  published or None, datetime.now().isoformat(), sev,
+                  json.dumps(ents), date_source))
             new_count += 1
 
         time.sleep(0.3)  # rate limit

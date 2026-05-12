@@ -286,33 +286,78 @@ def send_feishu(message: dict) -> bool:
         return False
 
 
+def audit_events(events: list) -> tuple:
+    """推送前的二次审计 (Codex 建议)
+    所有候选必须通过：
+    - content_freshness == 'recent'
+    - date_source != 'unknown'
+    - published_at 非空且非今天的默认填充
+    Returns: (clean, rejected) tuple of lists
+    """
+    from datetime import datetime
+    today = datetime.now().strftime("%Y-%m-%d")
+    clean = []
+    rejected = []
+    for ev in events:
+        reasons = []
+        if (ev.get("content_freshness") or "uncertain") != "recent":
+            reasons.append(f"freshness={ev.get('content_freshness') or 'NULL'}")
+        ds = ev.get("date_source") or "unknown"
+        if ds == "unknown":
+            reasons.append("date_source=unknown")
+        pub = ev.get("published_at") or ""
+        if not pub:
+            reasons.append("no published_at")
+
+        if reasons:
+            rejected.append({"event": ev, "reasons": reasons})
+        else:
+            clean.append(ev)
+    return clean, rejected
+
+
 def notify_if_events(min_severity: int = 3, min_4star_count: int = 3):
     """B方案智能推送：仅当 Top 10 含 ≥ N 条 4星+ 事件才推送
 
     min_severity: 候选事件最低重要性（默认3）
     min_4star_count: 触发推送的 4星+ 事件数量门槛（默认3）
 
-    平淡日（不达门槛）：静默累积到次日
+    Codex 三道门禁:
+    1. get_unpushed_events 已用 curate 硬过滤 (freshness=recent + date_source!=unknown)
+    2. 这里再做 audit 二次确认
+    3. 任一审计失败 → 静默 + 打印被拦截列表
     """
     events = get_unpushed_events(min_severity=min_severity)
     if not events:
         print("ℹ️ no unpushed events — silent")
         return False
 
-    # B方案核心阈值
-    n_4star_plus = sum(1 for e in events if (e.get("severity") or 0) >= 4)
+    # 二次审计
+    clean, rejected = audit_events(events)
+    if rejected:
+        print(f"⚠ audit blocked {len(rejected)} event(s):")
+        for r in rejected[:5]:
+            ev = r["event"]
+            t = (ev.get("translated_title") or ev.get("title") or "")[:50]
+            print(f"   - {t} | reasons: {', '.join(r['reasons'])}")
+
+    if not clean:
+        print("ℹ️ all candidates failed audit — silent")
+        return False
+
+    # B方案核心阈值（用通过审计的）
+    n_4star_plus = sum(1 for e in clean if (e.get("severity") or 0) >= 4)
     if n_4star_plus < min_4star_count:
-        n5 = sum(1 for e in events if (e.get("severity") or 0) >= 5)
-        print(f"ℹ️ today's Top 10 has only {n_4star_plus} ≥4★ events "
-              f"({n5} of which are 5★) — below threshold ({min_4star_count}), silent")
+        print(f"ℹ️ Top {len(clean)} (post-audit) has only {n_4star_plus} ≥4★ events "
+              f"— below threshold ({min_4star_count}), silent")
         return False
 
     metrics = get_key_metrics()
-    msg = build_event_message(events, metrics)
+    msg = build_event_message(clean, metrics)
     ok = send_feishu(msg)
     if ok:
-        mark_events_pushed([e["id"] for e in events])
-        print(f"   pushed {len(events)} events ({n_4star_plus} ≥4★)")
+        mark_events_pushed([e["id"] for e in clean])
+        print(f"   pushed {len(clean)} events ({n_4star_plus} ≥4★)")
     return ok
 
 

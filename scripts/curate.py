@@ -25,6 +25,15 @@ AUTHORITY_DOMAINS = {
     "cls.cn": 1, "qbitai.com": 1,
 }
 
+# 黑名单：非新闻源（聚合/视频/社交媒体易返回旧内容）
+SOURCE_BLACKLIST = {
+    "youtube.com", "facebook.com", "linkedin.com", "twitter.com", "x.com",
+    "reddit.com", "tiktok.com", "instagram.com",
+    "investing.com",          # 多为聚合
+    "biggo.com",              # 内容聚合
+    "letsdatascience.com",    # 二手分析
+}
+
 # 每类别目标条数（总和 10）
 CATEGORY_QUOTA = {"capex": 4, "token": 3, "investment": 3}
 
@@ -71,15 +80,26 @@ def get_top_curated(window_days: int = 7, n: int = 10, only_unpushed: bool = Fal
 
     cutoff_disc = (datetime.now() - timedelta(days=window_days)).isoformat()
     cutoff_pub = (datetime.now() - timedelta(days=window_days)).strftime("%Y-%m-%d")
-    # 双重过滤: discovered_at(发现时间) 和 published_at(真实发布日)
-    # 防止 Tavily 返回历史文章被当成新闻
+    # 硬门禁 (Codex 建议)：默认只接受确定新鲜的新闻
+    # 1. discovered_at 在窗口内
+    # 2. published_at 必须存在且 >= 窗口起点
+    # 3. content_freshness 必须是 'recent' （Claude 已确认）
+    # 4. translated_title 必须已存在（确认 Claude 已处理）
+    # 5. date_source != 'unknown' （日期可信）
     sql = """
         SELECT id, category, title, translated_title, summary, url, source_name,
-               published_at, discovered_at, severity, entities, impact, thesis
+               published_at, discovered_at, severity, entities, impact, thesis,
+               content_freshness, date_source
         FROM news_events
         WHERE discovered_at >= ?
-          AND (published_at >= ? OR published_at IS NULL OR published_at = '')
+          AND published_at IS NOT NULL
+          AND published_at != ''
+          AND published_at >= ?
           AND severity >= 3
+          AND content_freshness = 'recent'
+          AND translated_title IS NOT NULL
+          AND translated_title != ''
+          AND COALESCE(date_source, 'unknown') != 'unknown'
     """
     params = [cutoff_disc, cutoff_pub]
     if only_unpushed:
@@ -89,6 +109,11 @@ def get_top_curated(window_days: int = 7, n: int = 10, only_unpushed: bool = Fal
     cur.execute(sql, params)
     all_events = [dict(r) for r in cur.fetchall()]
     conn.close()
+
+    # 移除黑名单源
+    all_events = [e for e in all_events
+                  if not any(bl in (e.get("source_name") or "").lower()
+                             for bl in SOURCE_BLACKLIST)]
 
     if not all_events:
         return []
