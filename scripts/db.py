@@ -99,14 +99,33 @@ def init_db():
         summary TEXT,
         url TEXT,
         source_name TEXT,
-        published_at TEXT,
+        published_at TEXT,           -- ISO YYYY-MM-DD (规范化后)
         discovered_at TEXT NOT NULL,
         severity INTEGER DEFAULT 3,
-        entities TEXT,           -- JSON: ["AMZN", "NVDA", ...]
-        impact TEXT,             -- positive / negative / neutral
-        thesis TEXT,             -- 投资视角解读 1-2句
+        entities TEXT,               -- JSON: ["AMZN", "NVDA", ...]
+        impact TEXT,                 -- positive / negative / neutral
+        thesis TEXT,                 -- 投资视角解读 1-2句
+        content_freshness TEXT,      -- recent / older / uncertain (Claude判定)
+        extracted_date TEXT,         -- Claude从内容提取的真实事件日期
+        extracted_data TEXT,         -- Claude提取的结构化数据 JSON
+        date_source TEXT DEFAULT 'unknown',  -- url / tavily / unknown
         pushed BOOLEAN DEFAULT 0,
         pushed_at TEXT
+    );
+
+    -- Capex 指引变更待审核队列
+    CREATE TABLE IF NOT EXISTS capex_guidance_pending (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        event_id INTEGER REFERENCES news_events(id),
+        company TEXT NOT NULL,
+        year INTEGER NOT NULL,
+        new_low REAL,
+        new_high REAL,
+        confidence TEXT,
+        source TEXT,
+        detected_at TEXT,
+        status TEXT DEFAULT 'pending',
+        UNIQUE(event_id, company, year)
     );
     CREATE INDEX IF NOT EXISTS idx_events_discovered ON news_events(discovered_at DESC);
     CREATE INDEX IF NOT EXISTS idx_events_category ON news_events(category, discovered_at DESC);
@@ -147,9 +166,31 @@ def init_db():
     );
     """)
 
+    # 幂等迁移：旧 DB 缺列时补齐（不丢数据）
+    _ensure_columns(cur)
+
     conn.commit()
     conn.close()
     print(f"✅ Database initialized at {DB_PATH}")
+
+
+def _ensure_columns(cur):
+    """对历史 DB 幂等加列，应对 schema 演进"""
+    cur.execute("PRAGMA table_info(news_events)")
+    existing = {r[1] for r in cur.fetchall()}
+    migrations = [
+        ("translated_title", "TEXT"),
+        ("content_freshness", "TEXT"),
+        ("extracted_date", "TEXT"),
+        ("extracted_data", "TEXT"),
+        ("date_source", "TEXT DEFAULT 'unknown'"),
+        ("impact", "TEXT"),
+        ("thesis", "TEXT"),
+    ]
+    for col, dtype in migrations:
+        if col not in existing:
+            cur.execute(f"ALTER TABLE news_events ADD COLUMN {col} {dtype}")
+            print(f"  + migrated: news_events.{col}")
 
 
 if __name__ == "__main__":

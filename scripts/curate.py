@@ -27,11 +27,18 @@ AUTHORITY_DOMAINS = {
 
 # 黑名单：非新闻源（聚合/视频/社交媒体易返回旧内容）
 SOURCE_BLACKLIST = {
+    # 视频/社交
     "youtube.com", "facebook.com", "linkedin.com", "twitter.com", "x.com",
-    "reddit.com", "tiktok.com", "instagram.com",
-    "investing.com",          # 多为聚合
-    "biggo.com",              # 内容聚合
-    "letsdatascience.com",    # 二手分析
+    "reddit.com", "tiktok.com", "instagram.com", "weibo.com", "zhihu.com",
+    # 财经聚合（常返回历史回顾文章）
+    "yahoo.com", "finance.yahoo.com", "investing.com", "biggo.com",
+    "seekingalpha.com", "fool.com", "marketbeat.com", "benzinga.com",
+    "tipranks.com", "zacks.com", "marketwatch.com",
+    # 二手分析/博客平台
+    "letsdatascience.com", "substack.com", "medium.com", "wordpress.com",
+    "blogspot.com", "tumblr.com",
+    # AI 内容农场
+    "tech-insider.org",
 }
 
 # 每类别目标条数（总和 10）
@@ -68,12 +75,14 @@ def score_event(ev: dict) -> float:
     return score
 
 
-def get_top_curated(window_days: int = 7, n: int = 10, only_unpushed: bool = False):
+def get_top_curated(window_days: int = 7, n: int = 10, only_unpushed: bool = False,
+                    min_severity: int = 3):
     """精选 Top N
 
-    window_days: 时间窗口（默认7天）
+    window_days: 时间窗口（默认7天，飞书日报建议2-3）
     n: 总数（默认10）
     only_unpushed: 只挑未推送过的（用于飞书事件驱动）
+    min_severity: 候选最低重要性
     """
     conn = get_conn()
     cur = conn.cursor()
@@ -95,13 +104,14 @@ def get_top_curated(window_days: int = 7, n: int = 10, only_unpushed: bool = Fal
           AND published_at IS NOT NULL
           AND published_at != ''
           AND published_at >= ?
-          AND severity >= 3
+          AND severity >= ?
           AND content_freshness = 'recent'
           AND translated_title IS NOT NULL
           AND translated_title != ''
           AND COALESCE(date_source, 'unknown') != 'unknown'
+          AND published_at GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]'
     """
-    params = [cutoff_disc, cutoff_pub]
+    params = [cutoff_disc, cutoff_pub, min_severity]
     if only_unpushed:
         sql += " AND pushed = 0"
     sql += " ORDER BY discovered_at DESC"

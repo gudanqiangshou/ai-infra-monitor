@@ -55,11 +55,14 @@ def domain_label(url: str) -> str:
         return "来源"
 
 
-def get_unpushed_events(min_severity: int = 3):
-    """获取未推送的高重要性事件 — 用精选 Top 10"""
+def get_unpushed_events(min_severity: int = 3, window_days: int = 2):
+    """获取未推送的高重要性事件 — 用精选 Top 10
+
+    飞书日报窗口默认 2 天 (Codex 建议: 7天太宽容易混入'旧但仍在窗口'的事件)
+    """
     from curate import get_top_curated
-    # 只取未推送的精选
-    return get_top_curated(window_days=7, n=10, only_unpushed=True)
+    return get_top_curated(window_days=window_days, n=10, only_unpushed=True,
+                           min_severity=min_severity)
 
 
 def mark_events_pushed(event_ids):
@@ -316,18 +319,20 @@ def audit_events(events: list) -> tuple:
     return clean, rejected
 
 
-def notify_if_events(min_severity: int = 3, min_4star_count: int = 3):
+def notify_if_events(min_severity: int = 3, min_4star_count: int = 3,
+                     window_days: int = 2):
     """B方案智能推送：仅当 Top 10 含 ≥ N 条 4星+ 事件才推送
 
-    min_severity: 候选事件最低重要性（默认3）
+    min_severity: 候选事件最低重要性（默认3，透传到 curate）
     min_4star_count: 触发推送的 4星+ 事件数量门槛（默认3）
+    window_days: 飞书日报窗口（默认2天，比 dashboard 的7天更严）
 
     Codex 三道门禁:
-    1. get_unpushed_events 已用 curate 硬过滤 (freshness=recent + date_source!=unknown)
+    1. get_unpushed_events 已用 curate 硬过滤
     2. 这里再做 audit 二次确认
     3. 任一审计失败 → 静默 + 打印被拦截列表
     """
-    events = get_unpushed_events(min_severity=min_severity)
+    events = get_unpushed_events(min_severity=min_severity, window_days=window_days)
     if not events:
         print("ℹ️ no unpushed events — silent")
         return False

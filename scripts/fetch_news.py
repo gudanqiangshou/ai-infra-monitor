@@ -49,6 +49,52 @@ def extract_date_from_url(url: str) -> str:
                 continue
     return ""
 
+
+def normalize_date_to_iso(raw: str) -> str:
+    """把任意日期格式规范化为 ISO YYYY-MM-DD
+
+    支持:
+    - 'YYYY-MM-DD' / 'YYYY-MM-DDTHH:...' (本来就 ISO)
+    - 'Mon, 11 May 2026 09:04:56 GMT' (Tavily 常用 RFC2822)
+    - 'May 11, 2026' / '11 May 2026' (常见英文)
+    - 'YYYY/MM/DD' / 'YYYY.MM.DD'
+
+    无法解析返回空字符串。
+    """
+    if not raw or not isinstance(raw, str):
+        return ""
+    raw = raw.strip()
+
+    # 已经 ISO 格式
+    iso_match = re.match(r'^(\d{4})-(\d{2})-(\d{2})', raw)
+    if iso_match:
+        y, mo, d = iso_match.groups()
+        try:
+            if 2020 <= int(y) <= 2030:
+                return f"{y}-{mo}-{d}"
+        except Exception:
+            pass
+
+    # Python 内建 RFC2822 解析（如 "Mon, 11 May 2026 09:04:56 GMT"）
+    try:
+        from email.utils import parsedate_to_datetime
+        dt = parsedate_to_datetime(raw)
+        if dt and 2020 <= dt.year <= 2030:
+            return dt.strftime("%Y-%m-%d")
+    except Exception:
+        pass
+
+    # 兜底：用 dateutil（如果可用）解析常见英文/中文格式
+    try:
+        from dateutil import parser as dp
+        dt = dp.parse(raw, fuzzy=True)
+        if dt and 2020 <= dt.year <= 2030:
+            return dt.strftime("%Y-%m-%d")
+    except Exception:
+        pass
+
+    return ""
+
 try:
     from tavily import TavilyClient
     HAS_TAVILY = True
@@ -259,33 +305,31 @@ def fetch_all_news(days: int = 3, max_per_query: int = 5, max_age_days: int = 7)
             if not title or not url:
                 continue
 
-            # 优先级：URL内日期(最可信) > Tavily published_date(可能是索引日期)
+            # 优先级：URL内日期(最可信) > Tavily published_date(规范化后)
+            # 关键: 所有日期必须规范化为 ISO YYYY-MM-DD, 解析不出来就 unknown
             url_date = extract_date_from_url(url)
             published = ""
             date_source = "unknown"
 
             if url_date:
-                # URL 有日期 → 最可信
+                # URL 解析出的就是 ISO 格式
                 published = url_date
                 date_source = "url"
-                # 与 Tavily 日期比较，取早的（防Tavily用今天的索引日期覆盖）
-                if tavily_pub:
-                    try:
-                        url_d = datetime.fromisoformat(url_date)
-                        tav_d = datetime.fromisoformat(tavily_pub.split("T")[0])
-                        if url_d < tav_d:
-                            pass  # 已经用 url_date 了
-                    except Exception:
-                        pass
             elif tavily_pub:
-                # 没URL日期，但有Tavily日期 - 不可信但保留
-                published = tavily_pub.split("T")[0] if "T" in tavily_pub else tavily_pub
-                date_source = "tavily"
+                # Tavily 日期需规范化 (常见 RFC2822 如 'Mon, 11 May 2026...')
+                iso = normalize_date_to_iso(tavily_pub)
+                if iso:
+                    published = iso
+                    date_source = "tavily"
+                else:
+                    # 无法解析的字符串一律按 unknown 处理
+                    published = ""
+                    date_source = "unknown"
             else:
                 published = ""
                 date_source = "unknown"
 
-            # 硬过滤：仅丢弃明确过时的（URL有日期且过老）
+            # 硬过滤：仅丢弃明确过时的（有 ISO 日期且过老）
             if is_too_old(published, max_days=max_age_days):
                 stale_count += 1
                 continue
