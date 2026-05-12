@@ -121,13 +121,15 @@ def is_duplicate(cur, h: str) -> bool:
 
 
 def search_tavily(client, query: str, days: int = 3, max_results: int = 5):
-    """单次Tavily搜索"""
+    """单次Tavily搜索 - 严格按 days 过滤"""
     try:
         resp = client.search(
             query=query,
             search_depth="basic",
             max_results=max_results,
             days=days,
+            time_range="d",  # 强化按日过滤
+            topic="news",     # 仅返回新闻类
             include_answer=False,
         )
         return resp.get("results", []) or []

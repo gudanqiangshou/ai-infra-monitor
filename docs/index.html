@@ -48,6 +48,17 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC"
 .impact-neg { color: #dc2626; font-size: 11px; margin-left: 6px; font-weight: 600; }
 .event-thesis { font-size: 12px; color: #475569; margin-top: 6px; padding: 6px 10px;
                 background: #f8fafc; border-left: 3px solid #94a3b8; border-radius: 3px; line-height: 1.5; }
+.pending-banner { background: linear-gradient(90deg, #fef3c7 0%, #fef9c3 100%);
+                  border: 1px solid #fde68a; border-radius: 10px; padding: 14px 18px;
+                  margin-bottom: 20px; font-size: 13px; }
+.pending-banner .ph { font-weight: 600; color: #854d0e; margin-bottom: 8px; font-size: 14px; }
+.pending-item { padding: 6px 0; border-top: 1px dashed #fde68a; display: flex;
+                gap: 10px; align-items: baseline; }
+.pending-item:first-of-type { border-top: none; padding-top: 0; }
+.pending-co { font-weight: 700; min-width: 60px; color: #92400e; }
+.pending-num { font-weight: 600; color: #1e293b; }
+.pending-meta { font-size: 11px; color: #78716c; flex: 1; }
+.pending-meta a { color: #78716c; text-decoration: underline; }
 .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 20px; }
 .stat-card { background: white; padding: 16px; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
 .stat-value { font-size: 22px; font-weight: 700; color: #1e293b; }
@@ -64,7 +75,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC"
 
 <div class="header">
   <h1>📊 AI基建投资监控 Dashboard</h1>
-  <div class="meta">数据更新：2026-05-12 12:34 · 数据点：68条Capex · 51条Token · 30条模型 · 321条价格 · 10条事件</div>
+  <div class="meta">数据更新：2026-05-12 12:56 · 数据点：68条Capex · 51条Token · 30条模型 · 321条价格 · 10条事件</div>
 </div>
 
 <div class="tabs">
@@ -80,6 +91,8 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC"
 
 <!-- ==================== Tab 1: Capex ==================== -->
 <div id="tab-capex" class="tab-pane active">
+
+  
 
   <div class="stat-grid">
     <div class="stat-card">
@@ -313,120 +326,120 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC"
             <span class="event-badge badge-capex">Capex</span>
             <div class="event-content">
               <div class="event-title">
-                <a href="https://asia.nikkei.com/business/technology/artificial-intelligence/meta-raises-2026-capex-to-145-billion-amid-ai-spending-boost" target="_blank" title="Meta raises 2026 capex to $145 billion amid AI spending boost - Nikkei Asia">Meta上调2026年Capex至$1450亿</a>
+                <a href="https://asia.nikkei.com/business/technology/artificial-intelligence/meta-raises-2026-capex-to-145-billion-amid-ai-spending-boost" target="_blank" title="Meta raises 2026 capex to $145 billion amid AI spending boost - Nikkei Asia">Meta上调2026年Capex至1450亿美元</a>
                 <span class="severity-stars">⭐⭐⭐⭐⭐</span>
                 <span class="impact-pos">📈 利好</span>
               </div>
               <div class="event-meta">asia.nikkei.com · 2026-05-11 · META</div>
-              <div class="event-thesis">💡 Meta Capex指引上调$100亿至$1450亿，直接利好NVDA GPU需求及数据中心供应链。</div>
+              <div class="event-thesis">💡 Meta Capex上调利好NVDA/TSM/HBM供应链，AI算力需求超预期</div>
             </div>
           </li>
           <li class="event-item">
             <span class="event-badge badge-capex">Capex</span>
             <div class="event-content">
               <div class="event-title">
-                <a href="https://www.datacenterdynamics.com/en/news/google-secures-nearly-32bn-in-debt-following-major-data-center-capex-commitment/" target="_blank" title="Google secures nearly $32bn in debt following major data center ...">Google发行320亿美元债券为2026年1850亿Capex融资</a>
+                <a href="https://www.youtube.com/watch" target="_blank" title="GOOGLE、META、微軟- 2026年第一季美科技巨頭財報解析 - YouTube">2026年Q1美科技巨头财报解析：GOOGL/META/MSFT AI基建与云增长</a>
                 <span class="severity-stars">⭐⭐⭐⭐⭐</span>
                 <span class="impact-pos">📈 利好</span>
               </div>
-              <div class="event-meta">datacenterdynamics.com · 2026-05-11 · GOOGL</div>
-              <div class="event-thesis">💡 Alphabet大规模债券融资锁定AI基建投入，GOOGL Capex执行确定性提升。</div>
+              <div class="event-meta">youtube.com · 2026-05-12 · GOOGL, META</div>
+              <div class="event-thesis">💡 Q1财报确认四大云Capex高增长，直接利好NVDA/TSM/AVGO/MU整条AI产业链</div>
             </div>
           </li>
           <li class="event-item">
             <span class="event-badge badge-capex">Capex</span>
             <div class="event-content">
               <div class="event-title">
-                <a href="https://h5.ifeng.com/c/vivo/v002--AjbcTthwdyHoi2SFXm9VNQn5I43RFQ0axj9qPgd9--o__" target="_blank" title="6000多亿砸进AI：谷歌、Meta、微软、亚马逊给出的答案不一样">四大美国云Q1财报：合计Capex指引近7000亿美元</a>
+                <a href="https://finance.yahoo.com/news/amazon-200-billion-ai-spending-153341517.html" target="_blank" title="Amazon's $200 Billion AI Spending Shocker Has Wall Street Asking ...">亚马逊2026年AI Capex承诺达2000亿美元</a>
                 <span class="severity-stars">⭐⭐⭐⭐⭐</span>
                 <span class="impact-pos">📈 利好</span>
               </div>
-              <div class="event-meta">h5.ifeng.com · 2026-05-12 · AMZN, MSFT, GOOGL, META</div>
-              <div class="event-thesis">💡 AMZN/MSFT/GOOGL/META Capex大幅提速，直接利好NVDA/TSM/AVGO/MU及电力网络基建</div>
+              <div class="event-meta">finance.yahoo.com · 2026-05-12 · AMZN</div>
+              <div class="event-thesis">💡 AMZN史上最大Capex承诺，强力支撑AWS算力扩张，利好NVDA/电力/网络产业链</div>
             </div>
           </li>
           <li class="event-item">
             <span class="event-badge badge-capex">Capex</span>
             <div class="event-content">
               <div class="event-title">
-                <a href="https://thetechcapital.com/meta-predicts-us135-billion-capex-spend-in-2026-to-support-ai-buildout" target="_blank" title="Meta predicts $135 billion capex spend in 2026 to support AI buildout - The Tech Capital">Meta预测2026年Capex达1350亿美元以支撑AI扩张</a>
+                <a href="https://letsdatascience.com/news/amazon-increases-capex-to-442b-in-q1-accelerating-ai-buildou-45ccd319" target="_blank" title="Amazon increases CAPEX to $44.2B in Q1, accelerating AI buildout">亚马逊Q1 Capex达442亿美元，同比增77%</a>
                 <span class="severity-stars">⭐⭐⭐⭐⭐</span>
                 <span class="impact-pos">📈 利好</span>
               </div>
-              <div class="event-meta">thetechcapital.com · 2026-05-12 · META</div>
-              <div class="event-thesis">💡 Meta大幅上调Capex指引，直接利好NVDA、TSM、AVGO等AI基建供应链及电力/网络设备商</div>
+              <div class="event-meta">letsdatascience.com · 2026-05-12 · AMZN</div>
+              <div class="event-thesis">💡 AMZN单季Capex创新高，AI基建加速落地，直接拉动NVDA/TSM/MU/HBM需求</div>
             </div>
           </li>
           <li class="event-item">
             <span class="event-badge badge-token">Token</span>
             <div class="event-content">
               <div class="event-title">
-                <a href="https://finance.biggo.com/news/PQLNZ50Bq7sy_YQM1IkJ" target="_blank" title="China's AI Models Surpass U.S. in Global Token Usage for First ...">中国AI模型全球Token使用量首次超越美国</a>
+                <a href="https://www.facebook.com/groups/Founder.CEOs/posts/4320349168240647/" target="_blank" title="Deepseek v4 model with 1.6t parameters and 1 million token context ...">DeepSeek V4发布：1.6T参数/百万Token上下文，效率大幅提升</a>
                 <span class="severity-stars">⭐⭐⭐⭐⭐</span>
-                <span class="impact-pos">📈 利好</span>
+                <span class="impact-neg">📉 利空</span>
               </div>
-              <div class="event-meta">finance.biggo.com · 2026-05-12</div>
-              <div class="event-thesis">💡 字节/阿里等中国云Token消耗崛起，利好国内AI芯片及云基础设施需求。</div>
-            </div>
-          </li>
-          <li class="event-item">
-            <span class="event-badge badge-token">Token</span>
-            <div class="event-content">
-              <div class="event-title">
-                <a href="http://www.iceo.com.cn/article/26dec6cb-0cf5-45de-95b2-fa92f80747df" target="_blank" title="字节跳动，正在变成“Token跳动”">字节跳动豆包日均Token调用超50万亿，半年增200%</a>
-                <span class="severity-stars">⭐⭐⭐⭐⭐</span>
-                <span class="impact-pos">📈 利好</span>
-              </div>
-              <div class="event-meta">iceo.com.cn · 2026-05-12 · GOOGL, OPENAI, BYTEDANCE</div>
-              <div class="event-thesis">💡 字节AI推理规模爆发式增长，直接拉动火山引擎云算力及HBM/GPU采购需求。</div>
-            </div>
-          </li>
-          <li class="event-item">
-            <span class="event-badge badge-token">Token</span>
-            <div class="event-content">
-              <div class="event-title">
-                <a href="https://post.smzdm.com/p/a4qe44nx" target="_blank" title="豆包大模型日均Token使用量突破120万亿，稳居中国第一、全球前三">豆包日均Token使用量破120万亿，三个月翻倍居中国第一</a>
-                <span class="severity-stars">⭐⭐⭐⭐⭐</span>
-                <span class="impact-pos">📈 利好</span>
-              </div>
-              <div class="event-meta">post.smzdm.com · 2026-05-11 · BYTEDANCE</div>
-              <div class="event-thesis">💡 字节豆包Token消耗量级验证中国AI推理需求爆发，直接利好火山引擎算力采购及NVDA/HBM需求。</div>
+              <div class="event-meta">facebook.com · 2026-05-11 · OPENAI, DEEPSEEK</div>
+              <div class="event-thesis">💡 开源模型效率跃升（FLOPs降73%），压制Token单价及GPU需求预期，利空NVDA/云厂商算力扩张逻辑</div>
             </div>
           </li>
           <li class="event-item">
             <span class="event-badge badge-investment">投资</span>
             <div class="event-content">
               <div class="event-title">
-                <a href="https://www.youtube.com/watch" target="_blank" title="TSMC Q1 2026 Earnings: Record Profits & The Unstoppable AI Chip ...">台积电Q1 2026财报：AI芯片需求驱动利润创历史新高</a>
+                <a href="https://www.youtube.com/watch" target="_blank" title="TSMC Q1 2026 Earnings: Record Profits & The Unstoppable AI Chip ...">台积电Q1 2026财报：AI芯片需求驱动创纪录利润</a>
                 <span class="severity-stars">⭐⭐⭐⭐⭐</span>
                 <span class="impact-pos">📈 利好</span>
               </div>
               <div class="event-meta">youtube.com · 2026-05-12 · TSM</div>
-              <div class="event-thesis">💡 TSM营收利润双创新高印证AI算力需求持续，利好TSM及上游NVDA/AVGO等AI芯片产业链。</div>
+              <div class="event-thesis">💡 TSM营收利润双创纪录，验证AI算力需求持续，利好TSM/NVDA/AVGO整条先进制程产业链</div>
             </div>
           </li>
           <li class="event-item">
             <span class="event-badge badge-investment">投资</span>
             <div class="event-content">
               <div class="event-title">
-                <a href="https://www.linkedin.com/posts/boardroom1_taiwan-semiconductor-manufacturing-company-activity-7448478464237666305-ZZmz" target="_blank" title="TSMC Reports Record Q1 2026 Revenue, Beats Expectations">台积电Q1 2026营收同比增35%，超市场预期</a>
+                <a href="https://www.linkedin.com/posts/boardroom1_taiwan-semiconductor-manufacturing-company-activity-7448478464237666305-ZZmz" target="_blank" title="TSMC Reports Record Q1 2026 Revenue, Beats Expectations">台积电Q1 2026营收同比增35%超预期</a>
                 <span class="severity-stars">⭐⭐⭐⭐⭐</span>
                 <span class="impact-pos">📈 利好</span>
               </div>
               <div class="event-meta">linkedin.com · 2026-05-12 · TSM</div>
-              <div class="event-thesis">💡 TSM季报超预期确认全球AI芯片需求韧性，关税扰动下需求未见明显衰减，产业链景气延续。</div>
+              <div class="event-thesis">💡 季度营收超预期+35%增速，印证全球AI芯片需求韧性，TSM及上游HBM/封装供应链受益</div>
             </div>
           </li>
           <li class="event-item">
             <span class="event-badge badge-investment">投资</span>
             <div class="event-content">
               <div class="event-title">
-                <a href="https://www.linkedin.com/posts/nvidia_news-nvidia-announces-financial-results-activity-7397045220007239680-CHfL" target="_blank" title="NVIDIA reports record revenue, Data Center growth in Q3 2026 | NVIDIA posted on the topic | LinkedIn">NVIDIA Q3 2026财报创纪录，数据中心业务高增长</a>
+                <a href="https://investors.coreweave.com/news/news-details/2026/CoreWeave-Reports-Strong-First-Quarter-2026-Results/" target="_blank" title="CoreWeave Reports Strong First Quarter 2026 Results">CoreWeave发布2026年Q1财报</a>
                 <span class="severity-stars">⭐⭐⭐⭐⭐</span>
                 <span class="impact-pos">📈 利好</span>
               </div>
-              <div class="event-meta">linkedin.com · 2026-05-12 · NVDA</div>
-              <div class="event-thesis">💡 NVDA财报验证AI基建需求持续爆发，数据中心营收创新高，产业链全面受益</div>
+              <div class="event-meta">investors.coreweave.com · 2026-05-11</div>
+              <div class="event-thesis">💡 CoreWeave季报披露算力需求与营收数据，直接反映NVDA GPU消化及AI云基建景气度</div>
+            </div>
+          </li>
+          <li class="event-item">
+            <span class="event-badge badge-token">Token</span>
+            <div class="event-content">
+              <div class="event-title">
+                <a href="https://finance.biggo.com/news/PQLNZ50Bq7sy_YQM1IkJ" target="_blank" title="China's AI Models Surpass U.S. in Global Token Usage for First ...">中国AI模型Token用量首次超越美国，占据全球执行层</a>
+                <span class="severity-stars">⭐⭐⭐⭐</span>
+                <span class="impact-pos">📈 利好</span>
+              </div>
+              <div class="event-meta">finance.biggo.com · 2026-05-12</div>
+              <div class="event-thesis">💡 中国AI推理需求爆发，利好阿里/腾讯/字节云算力及国产AI芯片，对NVDA出口限制形成对冲压力</div>
+            </div>
+          </li>
+          <li class="event-item">
+            <span class="event-badge badge-token">Token</span>
+            <div class="event-content">
+              <div class="event-title">
+                <a href="https://finance.yahoo.com/news/ai-spending-to-hit-253-trillion-in-2026-333-trillion-in-2027-201834333.html" target="_blank" title="AI spending to hit $2.53 trillion in 2026, $3.33 trillion in 2027">Gartner：2026年全球AI支出达2.53万亿美元</a>
+                <span class="severity-stars">⭐⭐⭐</span>
+                <span class="impact-pos">📈 利好</span>
+              </div>
+              <div class="event-meta">finance.yahoo.com · 2026-05-12</div>
+              <div class="event-thesis">💡 宏观AI支出预测上调，利好四大美国云Capex及NVDA/TSM/AVGO整条产业链</div>
             </div>
           </li>
     </ul>
