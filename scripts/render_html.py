@@ -86,6 +86,24 @@ def query_assets():
     return rows
 
 
+def query_pending_guidance():
+    """待审核的 Capex 指引变更"""
+    conn = get_conn()
+    cur = conn.cursor()
+    cur.execute("""
+        SELECT p.id, p.company, p.year, p.new_low, p.new_high, p.confidence,
+               p.detected_at, e.title, e.translated_title, e.url, e.source_name
+        FROM capex_guidance_pending p
+        LEFT JOIN news_events e ON p.event_id = e.id
+        WHERE p.status = 'pending'
+        ORDER BY p.detected_at DESC
+        LIMIT 10
+    """)
+    rows = [dict(r) for r in cur.fetchall()]
+    conn.close()
+    return rows
+
+
 def query_china_capex():
     conn = get_conn()
     cur = conn.cursor()
@@ -315,6 +333,17 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC"
 .impact-neg { color: #dc2626; font-size: 11px; margin-left: 6px; font-weight: 600; }
 .event-thesis { font-size: 12px; color: #475569; margin-top: 6px; padding: 6px 10px;
                 background: #f8fafc; border-left: 3px solid #94a3b8; border-radius: 3px; line-height: 1.5; }
+.pending-banner { background: linear-gradient(90deg, #fef3c7 0%, #fef9c3 100%);
+                  border: 1px solid #fde68a; border-radius: 10px; padding: 14px 18px;
+                  margin-bottom: 20px; font-size: 13px; }
+.pending-banner .ph { font-weight: 600; color: #854d0e; margin-bottom: 8px; font-size: 14px; }
+.pending-item { padding: 6px 0; border-top: 1px dashed #fde68a; display: flex;
+                gap: 10px; align-items: baseline; }
+.pending-item:first-of-type { border-top: none; padding-top: 0; }
+.pending-co { font-weight: 700; min-width: 60px; color: #92400e; }
+.pending-num { font-weight: 600; color: #1e293b; }
+.pending-meta { font-size: 11px; color: #78716c; flex: 1; }
+.pending-meta a { color: #78716c; text-decoration: underline; }
 .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 20px; }
 .stat-card { background: white; padding: 16px; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
 .stat-value { font-size: 22px; font-weight: 700; color: #1e293b; }
@@ -347,6 +376,8 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC"
 
 <!-- ==================== Tab 1: Capex ==================== -->
 <div id="tab-capex" class="tab-pane active">
+
+  __PENDING_GUIDANCE_HTML__
 
   <div class="stat-grid">
     <div class="stat-card">
@@ -899,6 +930,40 @@ window.addEventListener('resize', () => {
 """
 
 
+def render_pending_html(pending):
+    """渲染待审核指引变更（中等置信度），让用户人工核对"""
+    if not pending:
+        return ""
+    items = []
+    for p in pending:
+        co = p["company"]
+        yr = p["year"]
+        lo = p["new_low"]
+        hi = p["new_high"]
+        title = p.get("translated_title") or p.get("title") or ""
+        url = p.get("url", "")
+        src = p.get("source_name", "")
+        if lo == hi:
+            range_str = f"${lo}B"
+        else:
+            range_str = f"${lo}-{hi}B (中位 ${(lo+hi)/2:.0f}B)"
+        link_html = f'<a href="{url}" target="_blank">来源: {src}</a>' if url else src
+        items.append(f"""
+          <div class="pending-item">
+            <span class="pending-co">{co} {yr}</span>
+            <span class="pending-num">{range_str}</span>
+            <span class="pending-meta">{title[:50]} · {link_html}</span>
+          </div>""")
+    return f"""
+    <div class="pending-banner">
+      <div class="ph">🔔 待人工确认的 Capex 指引变更 ({len(pending)} 条 · 中等置信度)</div>
+      <div class="subtitle" style="color:#a16207;margin-bottom:8px">
+        AI 从新闻自动提取，等待你核对真实性后人工应用到主指引表
+      </div>
+      {''.join(items)}
+    </div>"""
+
+
 def render_event_html(events):
     html_parts = []
     for ev in events:
@@ -972,6 +1037,7 @@ def main():
     tsmc = query_tsmc()
     korea = query_korea()
     power = query_power()
+    pending_guidance = query_pending_guidance()
 
     # 准备数据
     cap_quarters, cap_series = prep_capex_quarterly_data(capex_q)
@@ -1197,6 +1263,7 @@ def main():
         .replace("__STATS__", stats) \
         .replace("__DATA_JSON__", json.dumps(payload, ensure_ascii=False)) \
         .replace("__EVENT_LIST_HTML__", render_event_html(events)) \
+        .replace("__PENDING_GUIDANCE_HTML__", render_pending_html(pending_guidance)) \
         .replace("__CAPEX_GUIDANCE_2026__", str(capex_guidance_2026)) \
         .replace("__CAPEX_GUIDANCE_YOY__", f"+{guidance_yoy}%" if guidance_yoy > 0 else f"{guidance_yoy}%") \
         .replace("__CAPEX_LATEST_Q__", str(latest_q_total)) \

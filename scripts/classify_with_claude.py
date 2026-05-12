@@ -30,30 +30,48 @@ except ImportError:
     HAS_CLAUDE = False
 
 
-PROMPT_TEMPLATE = """你是 AI 基建投资分析师。对以下新闻进行结构化处理。
+PROMPT_TEMPLATE = """你是 AI 基建投资分析师。对每条新闻输出结构化 JSON。
 
-【用户投资视角】关注：四大美国云（AMZN/MSFT/GOOGL/META）Capex、中国云（阿里/腾讯/字节/百度）、AI模型Token消耗、AI产业链（NVDA/TSM/AVGO/MU/HBM/电力/网络/中国AI芯片）
+【用户投资视角】四大美国云（AMZN/MSFT/GOOGL/META）Capex、中国云（阿里/腾讯/字节/百度）、AI模型Token消耗、AI产业链（NVDA/TSM/AVGO/MU/HBM/电力/网络/中国AI芯片）
 
-【处理任务】对每条新闻输出：
-1. **translated_title**：把英文标题翻译为简洁中文（30字内，保留专业术语如 Capex、AI、GPU 等英文缩写）。中文标题直接复制原文。
-2. **severity**（1-5）：
-   - 5 = 财报数据、Capex指引变更、重大并购、新模型/新芯片发布、单日股价 >5% 波动
-   - 4 = 数据中心新建、单家关键披露、深度行业研报
-   - 3 = 行业分析、CEO访谈、技术展望
-   - 2 = 一般动态
-   - 1 = 弱相关/炒作
-3. **impact**：positive（利好AI基建）/ negative（利空）/ neutral
-4. **thesis**：一句话从投资视角解读（影响哪类资产、值得关注什么），35字内
+【今天日期】{today}
+
+【输出字段】
+
+1. **translated_title**：英文→中文简洁标题（30字内，保留Capex/AI/GPU缩写）。中文直接复制。
+
+2. **severity** (1-5)：5=财报/指引变更/重大发布；4=数据中心新建/深度披露；3=行业分析/CEO访谈；2=一般；1=炒作
+
+3. **impact**：positive / negative / neutral
+
+4. **thesis**：投资视角解读（影响哪类资产），35字内
+
+5. **content_freshness** (重要)：判断新闻所述事件**何时发生**
+   - "recent" = 标题/摘要明确提到近期日期(7天内)，或讲的是正在发生的事
+   - "older" = 标题/摘要提到具体的历史日期(>7天前)，或是历史回顾
+   - "uncertain" = 无法判断
+   保守原则：宁可判 uncertain 也不要错判 recent
+
+6. **extracted_date** (可选)：若新闻明确提到事件日期，输出 ISO 格式 "YYYY-MM-DD" 或月份 "YYYY-MM"；找不到填 null
+
+7. **extracted_data** (可选，仅对 Capex/财报指引变更有效)：
+   {{"type": "capex_guidance", "company": "META", "year": 2026,
+     "new_low": 125, "new_high": 145, "confidence": "high|medium|low"}}
+   - confidence=high：标题明确说"上调至$XXB"且数字清晰
+   - confidence=medium：暗示但不确定
+   - confidence=low：模糊提及
+   - 没有数字变更就填 null
 
 【新闻列表】
 {news_block}
 
-【输出格式】严格JSON数组（无markdown，无解释文字）。
-**重要：translated_title 和 thesis 内的中文引号必须用「」或单引号，绝对不能用英文双引号 "（会破坏JSON）**
-每条对应一个新闻：
+【输出】严格JSON数组（无markdown），中文引号必须用「」或单引号，禁用英文双引号 "
 [
-  {{"id": 1, "translated_title": "...", "severity": 5, "impact": "positive", "thesis": "..."}},
-  {{"id": 2, "translated_title": "...", "severity": 4, "impact": "neutral", "thesis": "..."}}
+  {{"id": 1, "translated_title": "...", "severity": 5, "impact": "positive", "thesis": "...",
+    "content_freshness": "recent", "extracted_date": "2026-05-12",
+    "extracted_data": {{"type": "capex_guidance", "company": "META", "year": 2026, "new_low": 125, "new_high": 145, "confidence": "high"}}}},
+  {{"id": 2, "translated_title": "...", "severity": 3, "impact": "neutral", "thesis": "...",
+    "content_freshness": "older", "extracted_date": "2025-02", "extracted_data": null}}
 ]"""
 
 
@@ -73,14 +91,89 @@ def get_unprocessed_events(limit: int = 15):
     return rows
 
 
-def update_event(event_id: int, translated_title: str, sev: int, impact: str, thesis: str):
+def update_event(event_id: int, translated_title: str, sev: int, impact: str,
+                 thesis: str, freshness: str = "", extracted_date: str = "",
+                 extracted_data: dict = None):
     conn = get_conn()
     cur = conn.cursor()
     cur.execute("""
         UPDATE news_events
-        SET translated_title = ?, severity = ?, impact = ?, thesis = ?
+        SET translated_title = ?, severity = ?, impact = ?, thesis = ?,
+            content_freshness = ?, extracted_date = ?, extracted_data = ?
         WHERE id = ?
-    """, (translated_title, sev, impact, thesis, event_id))
+    """, (translated_title, sev, impact, thesis,
+          freshness or "",
+          extracted_date or "",
+          json.dumps(extracted_data, ensure_ascii=False) if extracted_data else None,
+          event_id))
+    conn.commit()
+    conn.close()
+
+
+def auto_sync_guidance(event_id: int, ed: dict, ev_source: str = ""):
+    """高置信度的 Capex 指引变更自动写入 capex_guidance；中等放入 pending 待审"""
+    if not ed or ed.get("type") != "capex_guidance":
+        return None
+    company = ed.get("company", "").upper()
+    if company not in ("AMZN", "AMAZON", "MSFT", "MICROSOFT", "GOOGL", "GOOGLE", "ALPHABET", "META"):
+        return None
+    # 规范化
+    company = {"AMAZON": "AMZN", "MICROSOFT": "MSFT", "GOOGLE": "GOOGL", "ALPHABET": "GOOGL"}.get(company, company)
+    year = ed.get("year")
+    new_low = ed.get("new_low")
+    new_high = ed.get("new_high")
+    confidence = ed.get("confidence", "low")
+    if not (year and (new_low or new_high)):
+        return None
+    # 默认: low只填一边时另一边相同
+    new_low = new_low or new_high
+    new_high = new_high or new_low
+
+    conn = get_conn()
+    cur = conn.cursor()
+    from datetime import datetime as _dt
+    today = _dt.now().strftime("%Y-%m-%d")
+
+    if confidence == "high":
+        # 检查是否已有相同的指引（防重复插入）
+        cur.execute("""
+            SELECT id FROM capex_guidance
+            WHERE company=? AND guidance_year=? AND announced_date=?
+              AND guidance_low_billion=? AND guidance_high_billion=?
+        """, (company, year, today, new_low, new_high))
+        if cur.fetchone():
+            conn.close()
+            return None
+        # 直接写入主表
+        cur.execute("""
+            INSERT INTO capex_guidance
+            (company, guidance_year, guidance_low_billion, guidance_high_billion,
+             guidance_point_billion, announced_date, source, notes)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        """, (company, year, new_low, new_high, (new_low + new_high) / 2,
+              today, f"AI-extracted from event #{event_id}", ev_source))
+        conn.commit()
+        conn.close()
+        return "applied"
+    elif confidence == "medium":
+        # 待审核队列
+        cur.execute("""
+            INSERT OR IGNORE INTO capex_guidance_pending
+            (event_id, company, year, new_low, new_high, confidence, source, detected_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        """, (event_id, company, year, new_low, new_high, confidence,
+              ev_source, _dt.now().isoformat()))
+        conn.commit()
+        conn.close()
+        return "pending"
+    conn.close()
+    return None
+
+
+def delete_stale_event(event_id: int):
+    """删除被识别为过时的事件"""
+    conn = get_conn()
+    conn.execute("DELETE FROM news_events WHERE id = ?", (event_id,))
     conn.commit()
     conn.close()
 
@@ -106,7 +199,8 @@ def classify_batch(events: list, client):
         summary = (ev.get('summary') or '')[:150]
         news_block += f"\n[{i}] {title}\n  来源:{ev.get('source_name', '')} 类别:{ev.get('category')} 摘要:{summary}\n"
 
-    prompt = PROMPT_TEMPLATE.format(news_block=news_block)
+    today = datetime.now().strftime("%Y-%m-%d")
+    prompt = PROMPT_TEMPLATE.format(today=today, news_block=news_block)
     model = os.environ.get("CLAUDE_MODEL", "claude-sonnet-4-6")
 
     try:
@@ -155,18 +249,45 @@ def classify_batch(events: list, client):
             return 0
 
         updated = 0
+        deleted = 0
+        synced = 0
+        pending = 0
         for r in results:
             idx = r.get("id", 0) - 1
             if 0 <= idx < len(events):
                 ev = events[idx]
+                freshness = r.get("content_freshness", "uncertain")
+                ext_data = r.get("extracted_data")
+
+                # 1. 先写入分类结果
                 update_event(
                     ev["id"],
                     r.get("translated_title", "")[:200],
                     r.get("severity", 3),
                     r.get("impact", "neutral"),
                     r.get("thesis", "")[:200],
+                    freshness=freshness,
+                    extracted_date=r.get("extracted_date") or "",
+                    extracted_data=ext_data,
                 )
                 updated += 1
+
+                # 2. 内容确认是过时的 → 删除
+                if freshness == "older":
+                    delete_stale_event(ev["id"])
+                    deleted += 1
+                    continue
+
+                # 3. 提取到 Capex 指引变更 → 自动同步或入审核队列
+                if ext_data:
+                    result = auto_sync_guidance(ev["id"], ext_data, ev.get("source_name", ""))
+                    if result == "applied":
+                        synced += 1
+                    elif result == "pending":
+                        pending += 1
+
+        if deleted or synced or pending:
+            print(f"   ↓ deleted {deleted} stale, applied {synced} guidance, queued {pending} pending")
         return updated
     except json.JSONDecodeError as e:
         import logging
