@@ -150,7 +150,7 @@ def main():
     if new_events > 0 and os.environ.get("ANTHROPIC_API_KEY"):
         logging.info(f"🤖 Step 1.5: classifying {new_events} new events with Claude...")
         try:
-            classify_with_claude.main(batch_size=12, max_batches=10)
+            classify_with_claude.main(batch_size=8, max_batches=12)
         except Exception as e:
             logging.error(f"classify failed: {e}")
 
