@@ -69,15 +69,19 @@ def get_top_curated(window_days: int = 7, n: int = 10, only_unpushed: bool = Fal
     conn = get_conn()
     cur = conn.cursor()
 
-    cutoff = (datetime.now() - timedelta(days=window_days)).isoformat()
+    cutoff_disc = (datetime.now() - timedelta(days=window_days)).isoformat()
+    cutoff_pub = (datetime.now() - timedelta(days=window_days)).strftime("%Y-%m-%d")
+    # 双重过滤: discovered_at(发现时间) 和 published_at(真实发布日)
+    # 防止 Tavily 返回历史文章被当成新闻
     sql = """
         SELECT id, category, title, translated_title, summary, url, source_name,
                published_at, discovered_at, severity, entities, impact, thesis
         FROM news_events
         WHERE discovered_at >= ?
+          AND (published_at >= ? OR published_at IS NULL OR published_at = '')
           AND severity >= 3
     """
-    params = [cutoff]
+    params = [cutoff_disc, cutoff_pub]
     if only_unpushed:
         sql += " AND pushed = 0"
     sql += " ORDER BY discovered_at DESC"

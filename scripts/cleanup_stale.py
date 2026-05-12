@@ -31,12 +31,12 @@ def cleanup(max_age_days: int = 7):
                         (url_date, row["id"]))
             n_url += 1
 
-    # 1. 显式过时事件（保留severity=5的里程碑）
+    # 1. 显式过时事件：全删（不保留 severity=5 例外）
+    # 投资场景下"今日要闻"必须新鲜；历史里程碑应在 capex_quarterly 等结构化表里
     cur.execute("""
         DELETE FROM news_events
         WHERE published_at < ?
           AND published_at != ''
-          AND severity < 5
     """, (cutoff,))
     n1 = cur.rowcount
 

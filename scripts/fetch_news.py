@@ -24,6 +24,12 @@ URL_DATE_PATTERNS = [
     re.compile(r"/(\d{4})/(\d{2})/(\d{2})/"),       # /2026/04/08/
     re.compile(r"/(\d{4})(\d{2})(\d{2})_"),         # /20260408_
     re.compile(r"-(\d{4})-(\d{2})-(\d{2})\."),      # -2026-04-08.html
+    re.compile(r"-(\d{4})-(\d{2})-(\d{2})/?$"),     # ...-2026-04-08/ or -2026-04-08 (Reuters/BBC/许多新闻站)
+    re.compile(r"-(\d{4})-(\d{2})-(\d{2})[-/_]"),   # ...-2026-04-08-some-suffix
+    re.compile(r"/(\d{4})/(\d{1,2})/(\d{1,2})\b"),  # /2026/4/8 (中文站点常见)
+    # 通用兜底：URL中任何 YYYY-MM-DD 形式
+    re.compile(r"\b(\d{4})-(\d{2})-(\d{2})\b"),
+    re.compile(r"\b(20\d{2})(\d{2})(\d{2})\b"),     # 20260408 紧凑格式
 ]
 
 
@@ -38,7 +44,7 @@ def extract_date_from_url(url: str) -> str:
                 y, mo, d = m.groups()
                 # 合理性检查
                 if 2020 <= int(y) <= 2030 and 1 <= int(mo) <= 12 and 1 <= int(d) <= 31:
-                    return f"{y}-{mo}-{d}"
+                    return f"{int(y):04d}-{int(mo):02d}-{int(d):02d}"
             except Exception:
                 continue
     return ""
