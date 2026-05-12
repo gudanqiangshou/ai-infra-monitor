@@ -202,15 +202,19 @@ def severity_score(title: str, content: str, category: str) -> int:
 
 
 def is_too_old(published: str, max_days: int = 7) -> bool:
-    """硬过滤：超过 max_days 天的新闻丢弃（Tavily的days参数不可靠）"""
+    """硬过滤：仅当能确认是过时新闻时丢弃
+
+    Tavily 本身已经按 days 参数过滤，所以:
+    - 有日期且 > max_days 天 → 过时
+    - 无日期 → 信任 Tavily 已过滤（不丢）
+    """
     if not published:
-        return True  # 没有日期的也丢
+        return False  # 信任 Tavily 的 days 参数
     try:
-        # 支持 "2026-04-08" 或 "2026-04-08T12:00:00"
         d = datetime.fromisoformat(published.split("T")[0])
         return (datetime.now() - d).days > max_days
     except Exception:
-        return True
+        return False  # 解析失败也信任 Tavily
 
 
 def fetch_all_news(days: int = 3, max_per_query: int = 5, max_age_days: int = 7):
@@ -261,10 +265,14 @@ def fetch_all_news(days: int = 3, max_per_query: int = 5, max_age_days: int = 7)
                 except Exception:
                     pass
 
-            # 硬过滤：丢弃过时新闻
+            # 硬过滤：仅丢弃明确过时的（URL有日期且过老）
             if is_too_old(published, max_days=max_age_days):
                 stale_count += 1
                 continue
+
+            # 没日期的填今天（信任 Tavily days 过滤）
+            if not published:
+                published = datetime.now().strftime("%Y-%m-%d")
 
             h = event_hash(title, url)
             if is_duplicate(cur, h):
